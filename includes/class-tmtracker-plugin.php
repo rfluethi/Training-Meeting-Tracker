@@ -10,47 +10,47 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Main class. Manages the sub components.
  */
-final class TMT_Plugin {
+final class TMTracker_Plugin {
 
 	/**
 	 * Singleton instance.
 	 *
-	 * @var TMT_Plugin|null
+	 * @var TMTracker_Plugin|null
 	 */
 	private static $instance = null;
 
 	/**
 	 * Fetcher instance.
 	 *
-	 * @var TMT_Fetcher
+	 * @var TMTracker_Fetcher
 	 */
 	public $fetcher;
 
 	/**
 	 * Renderer instance.
 	 *
-	 * @var TMT_Renderer
+	 * @var TMTracker_Renderer
 	 */
 	public $renderer;
 
 	/**
 	 * Shortcode instance.
 	 *
-	 * @var TMT_Shortcode
+	 * @var TMTracker_Shortcode
 	 */
 	public $shortcode;
 
 	/**
 	 * Settings instance.
 	 *
-	 * @var TMT_Settings
+	 * @var TMTracker_Settings
 	 */
 	public $settings;
 
 	/**
 	 * Singleton accessor.
 	 *
-	 * @return TMT_Plugin
+	 * @return TMTracker_Plugin
 	 */
 	public static function instance() {
 		if ( null === self::$instance ) {
@@ -70,10 +70,10 @@ final class TMT_Plugin {
 	 * @return void
 	 */
 	public function init() {
-		$this->fetcher   = new TMT_Fetcher();
-		$this->renderer  = new TMT_Renderer();
-		$this->shortcode = new TMT_Shortcode( $this->fetcher, $this->renderer );
-		$this->settings  = new TMT_Settings();
+		$this->fetcher   = new TMTracker_Fetcher();
+		$this->renderer  = new TMTracker_Renderer();
+		$this->shortcode = new TMTracker_Shortcode( $this->fetcher, $this->renderer );
+		$this->settings  = new TMTracker_Settings();
 
 		$this->shortcode->register();
 		$this->settings->register();
@@ -90,10 +90,10 @@ final class TMT_Plugin {
 	 */
 	public function enqueue_assets() {
 		wp_register_style(
-			'tmt-frontend',
-			TMT_PLUGIN_URL . 'assets/css/frontend.css',
+			'tmtracker-frontend',
+			TMTRACKER_PLUGIN_URL . 'assets/css/frontend.css',
 			array(),
-			TMT_VERSION
+			TMTRACKER_VERSION
 		);
 	}
 }

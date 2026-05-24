@@ -62,11 +62,11 @@ Each block is understandable in isolation and replaceable. If the action fails, 
 
 **Inside the plugin.**
 
-1. When the shortcode is invoked, `TMT_Fetcher` first checks the transient cache (default 12 hours).
+1. When the shortcode is invoked, `TMTracker_Fetcher` first checks the transient cache (default 12 hours).
 2. Cache empty, `wp_remote_get` is called against the JSON URL (`https://raw.githubusercontent.com/.../data/sitzungen.json`).
-3. Success: the JSON is validated against the schema, cached in the transient, and additionally stored in `tmt_last_good_data` as a persistent fallback.
+3. Success: the JSON is validated against the schema, cached in the transient, and additionally stored in `tmtracker_last_good_data` as a persistent fallback.
 4. Error: the last good fallback is rendered with a subtle notice.
-5. `TMT_Renderer` builds the HTML, `TMT_Shortcode` enqueues the stylesheet and outputs the result.
+5. `TMTracker_Renderer` builds the HTML, `TMTracker_Shortcode` enqueues the stylesheet and outputs the result.
 
 ## 4. Data model
 
@@ -111,7 +111,7 @@ Notes:
 - `title` comes from the body field `**Veranstaltung:**`, not from the issue title. This way the frontend shows a clean display name without the date.
 - `upcoming_sessions` is sorted ascending, `in_progress_sessions` and `past_sessions` descending by `session_date`.
 - `minutes_date` may be empty (label `Erledigt` is set but the issue is not closed, so no `closedAt`).
-- `schema_version`: the plugin accepts only the version hardcoded in `TMT_Fetcher::SUPPORTED_SCHEMA_VERSION`. Bump the major version on breaking changes.
+- `schema_version`: the plugin accepts only the version hardcoded in `TMTracker_Fetcher::SUPPORTED_SCHEMA_VERSION`. Bump the major version on breaking changes.
 
 ## 5. Where does what live?
 

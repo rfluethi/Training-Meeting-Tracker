@@ -10,27 +10,27 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Manages the plugin settings via the Settings API.
  */
-class TMT_Settings {
+class TMTracker_Settings {
 
 	/**
 	 * Settings page slug.
 	 */
-	const PAGE_SLUG = 'tmt-settings';
+	const PAGE_SLUG = 'tmtracker-settings';
 
 	/**
 	 * Settings group.
 	 */
-	const GROUP = 'tmt_settings_group';
+	const GROUP = 'tmtracker_settings_group';
 
 	/**
 	 * Nonce action for "Clear cache".
 	 */
-	const NONCE_CLEAR_CACHE = 'tmt_clear_cache';
+	const NONCE_CLEAR_CACHE = 'tmtracker_clear_cache';
 
 	/**
 	 * Nonce action for "Refresh now".
 	 */
-	const NONCE_REFRESH = 'tmt_refresh_now';
+	const NONCE_REFRESH = 'tmtracker_refresh_now';
 
 	/**
 	 * Register hooks.
@@ -40,8 +40,8 @@ class TMT_Settings {
 	public function register() {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
-		add_action( 'admin_post_tmt_clear_cache', array( $this, 'handle_clear_cache' ) );
-		add_action( 'admin_post_tmt_refresh_now', array( $this, 'handle_refresh_now' ) );
+		add_action( 'admin_post_tmtracker_clear_cache', array( $this, 'handle_clear_cache' ) );
+		add_action( 'admin_post_tmtracker_refresh_now', array( $this, 'handle_refresh_now' ) );
 	}
 
 	/**
@@ -52,41 +52,41 @@ class TMT_Settings {
 	public function register_settings() {
 		register_setting(
 			self::GROUP,
-			TMT_OPTION_SETTINGS,
+			TMTRACKER_OPTION_SETTINGS,
 			array(
 				'type'              => 'array',
 				'sanitize_callback' => array( $this, 'sanitize' ),
 				'default'           => array(
-					'json_url'    => TMT_DEFAULT_JSON_URL,
-					'cache_hours' => TMT_DEFAULT_CACHE_HOURS,
+					'json_url'    => TMTRACKER_DEFAULT_JSON_URL,
+					'cache_hours' => TMTRACKER_DEFAULT_CACHE_HOURS,
 				),
 				'show_in_rest'      => false,
 			)
 		);
 
 		add_settings_section(
-			'tmt_main_section',
+			'tmtracker_main_section',
 			__( 'Data source and cache', 'training-meeting-tracker' ),
 			array( $this, 'render_section_intro' ),
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
-			'tmt_json_url',
+			'tmtracker_json_url',
 			__( 'JSON URL', 'training-meeting-tracker' ),
 			array( $this, 'render_field_json_url' ),
 			self::PAGE_SLUG,
-			'tmt_main_section',
-			array( 'label_for' => 'tmt_json_url' )
+			'tmtracker_main_section',
+			array( 'label_for' => 'tmtracker_json_url' )
 		);
 
 		add_settings_field(
-			'tmt_cache_hours',
+			'tmtracker_cache_hours',
 			__( 'Cache duration (hours)', 'training-meeting-tracker' ),
 			array( $this, 'render_field_cache_hours' ),
 			self::PAGE_SLUG,
-			'tmt_main_section',
-			array( 'label_for' => 'tmt_cache_hours' )
+			'tmtracker_main_section',
+			array( 'label_for' => 'tmtracker_cache_hours' )
 		);
 	}
 
@@ -97,8 +97,8 @@ class TMT_Settings {
 	 */
 	public function register_menu() {
 		add_options_page(
-			__( 'DACH Sessions List', 'training-meeting-tracker' ),
-			__( 'DACH Sessions List', 'training-meeting-tracker' ),
+			__( 'Training Meeting Tracker', 'training-meeting-tracker' ),
+			__( 'Training Meeting Tracker', 'training-meeting-tracker' ),
 			'manage_options',
 			self::PAGE_SLUG,
 			array( $this, 'render_page' )
@@ -113,8 +113,8 @@ class TMT_Settings {
 	 */
 	public function sanitize( $input ) {
 		$out = array(
-			'json_url'    => TMT_DEFAULT_JSON_URL,
-			'cache_hours' => TMT_DEFAULT_CACHE_HOURS,
+			'json_url'    => TMTRACKER_DEFAULT_JSON_URL,
+			'cache_hours' => TMTRACKER_DEFAULT_CACHE_HOURS,
 		);
 
 		if ( ! is_array( $input ) ) {
@@ -140,7 +140,7 @@ class TMT_Settings {
 		}
 
 		// Drop the cache after settings changes so the new URL takes effect immediately.
-		delete_transient( TMT_TRANSIENT_DATA );
+		delete_transient( TMTRACKER_TRANSIENT_DATA );
 
 		return $out;
 	}
@@ -163,12 +163,12 @@ class TMT_Settings {
 	 * @return void
 	 */
 	public function render_field_json_url() {
-		$settings = (array) get_option( TMT_OPTION_SETTINGS, array() );
-		$value    = isset( $settings['json_url'] ) ? (string) $settings['json_url'] : TMT_DEFAULT_JSON_URL;
+		$settings = (array) get_option( TMTRACKER_OPTION_SETTINGS, array() );
+		$value    = isset( $settings['json_url'] ) ? (string) $settings['json_url'] : TMTRACKER_DEFAULT_JSON_URL;
 
 		printf(
-			'<input type="url" name="%1$s[json_url]" id="tmt_json_url" value="%2$s" class="regular-text" />',
-			esc_attr( TMT_OPTION_SETTINGS ),
+			'<input type="url" name="%1$s[json_url]" id="tmtracker_json_url" value="%2$s" class="regular-text" />',
+			esc_attr( TMTRACKER_OPTION_SETTINGS ),
 			esc_attr( $value )
 		);
 
@@ -184,12 +184,12 @@ class TMT_Settings {
 	 * @return void
 	 */
 	public function render_field_cache_hours() {
-		$settings = (array) get_option( TMT_OPTION_SETTINGS, array() );
-		$value    = isset( $settings['cache_hours'] ) ? (int) $settings['cache_hours'] : TMT_DEFAULT_CACHE_HOURS;
+		$settings = (array) get_option( TMTRACKER_OPTION_SETTINGS, array() );
+		$value    = isset( $settings['cache_hours'] ) ? (int) $settings['cache_hours'] : TMTRACKER_DEFAULT_CACHE_HOURS;
 
 		printf(
-			'<input type="number" name="%1$s[cache_hours]" id="tmt_cache_hours" value="%2$d" min="1" max="168" step="1" class="small-text" />',
-			esc_attr( TMT_OPTION_SETTINGS ),
+			'<input type="number" name="%1$s[cache_hours]" id="tmtracker_cache_hours" value="%2$d" min="1" max="168" step="1" class="small-text" />',
+			esc_attr( TMTRACKER_OPTION_SETTINGS ),
 			(int) $value
 		);
 
@@ -209,27 +209,27 @@ class TMT_Settings {
 			return;
 		}
 
-		$last_good    = get_option( TMT_OPTION_LAST_GOOD, null );
+		$last_good    = get_option( TMTRACKER_OPTION_LAST_GOOD, null );
 		$generated_at = ( is_array( $last_good ) && ! empty( $last_good['generated_at'] ) )
 			? (string) $last_good['generated_at']
 			: '';
 
 		// Notice flag after cache reset: read-only comparison, hence non-critical.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$cache_cleared = isset( $_GET['tmt-cache-clear'] )
+		$cache_cleared = isset( $_GET['tmtracker-cache-clear'] )
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			&& '1' === sanitize_text_field( wp_unslash( $_GET['tmt-cache-clear'] ) );
+			&& '1' === sanitize_text_field( wp_unslash( $_GET['tmtracker-cache-clear'] ) );
 
 		// Notice flag after manual refresh.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$refresh_status = isset( $_GET['tmt-refresh'] )
+		$refresh_status = isset( $_GET['tmtracker-refresh'] )
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			? sanitize_text_field( wp_unslash( $_GET['tmt-refresh'] ) )
+			? sanitize_text_field( wp_unslash( $_GET['tmtracker-refresh'] ) )
 			: '';
 
 		?>
 		<div class="wrap">
-			<h1><?php echo esc_html__( 'DACH Sessions List', 'training-meeting-tracker' ); ?></h1>
+			<h1><?php echo esc_html__( 'Training Meeting Tracker', 'training-meeting-tracker' ); ?></h1>
 
 			<?php if ( $cache_cleared ) : ?>
 				<div class="notice notice-success is-dismissible">
@@ -275,7 +275,7 @@ class TMT_Settings {
 
 			<p>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;margin-right:0.5em;">
-					<input type="hidden" name="action" value="tmt_refresh_now" />
+					<input type="hidden" name="action" value="tmtracker_refresh_now" />
 					<?php wp_nonce_field( self::NONCE_REFRESH ); ?>
 					<?php
 					submit_button(
@@ -288,7 +288,7 @@ class TMT_Settings {
 				</form>
 
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;">
-					<input type="hidden" name="action" value="tmt_clear_cache" />
+					<input type="hidden" name="action" value="tmtracker_clear_cache" />
 					<?php wp_nonce_field( self::NONCE_CLEAR_CACHE ); ?>
 					<?php
 					submit_button(
@@ -341,12 +341,12 @@ class TMT_Settings {
 
 		check_admin_referer( self::NONCE_CLEAR_CACHE );
 
-		delete_transient( TMT_TRANSIENT_DATA );
+		delete_transient( TMTRACKER_TRANSIENT_DATA );
 
 		$redirect = add_query_arg(
 			array(
 				'page'             => self::PAGE_SLUG,
-				'tmt-cache-clear' => '1',
+				'tmtracker-cache-clear' => '1',
 			),
 			admin_url( 'options-general.php' )
 		);
@@ -371,7 +371,7 @@ class TMT_Settings {
 
 		check_admin_referer( self::NONCE_REFRESH );
 
-		$fetcher = new TMT_Fetcher();
+		$fetcher = new TMTracker_Fetcher();
 		$result  = $fetcher->get_data( true );
 
 		$status = ( null !== $result['data'] && empty( $result['stale'] ) ) ? 'ok' : 'fail';
@@ -379,7 +379,7 @@ class TMT_Settings {
 		$redirect = add_query_arg(
 			array(
 				'page'         => self::PAGE_SLUG,
-				'tmt-refresh' => $status,
+				'tmtracker-refresh' => $status,
 			),
 			admin_url( 'options-general.php' )
 		);

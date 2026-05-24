@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
  * the database. It receives a validated payload from the fetcher (already
  * partitioned into upcoming / in_progress / past) and turns it into HTML.
  */
-class TMT_Renderer {
+class TMTracker_Renderer {
 
 	/**
 	 * Render the complete list.
@@ -36,15 +36,15 @@ class TMT_Renderer {
 		$show_past        = ! empty( $atts['show_past'] );
 		$years            = isset( $atts['years'] ) ? $atts['years'] : 'all';
 
-		$html  = '<div class="tmt-container">';
+		$html  = '<div class="tmtracker-container">';
 		$html .= $stale ? $this->render_stale_notice() : '';
 
 		if ( $show_upcoming && ! empty( $data['upcoming_sessions'] ) ) {
 			$html .= $this->render_session_list(
 				$data['upcoming_sessions'],
 				esc_html__( 'Upcoming meetings', 'training-meeting-tracker' ),
-				'tmt-upcoming',
-				'tmt-upcoming-heading'
+				'tmtracker-upcoming',
+				'tmtracker-upcoming-heading'
 			);
 		}
 
@@ -52,8 +52,8 @@ class TMT_Renderer {
 			$html .= $this->render_session_list(
 				$data['in_progress_sessions'],
 				esc_html__( 'Meetings in progress', 'training-meeting-tracker' ),
-				'tmt-in-progress',
-				'tmt-in-progress-heading'
+				'tmtracker-in-progress',
+				'tmtracker-in-progress-heading'
 			);
 		}
 
@@ -74,11 +74,11 @@ class TMT_Renderer {
 	 * @return string
 	 */
 	private function render_empty( $error ) {
-		$html  = '<div class="tmt-container tmt-empty" role="status">';
+		$html  = '<div class="tmtracker-container tmtracker-empty" role="status">';
 		$html .= '<p>' . esc_html__( 'Session data is being prepared.', 'training-meeting-tracker' ) . '</p>';
 
 		if ( null !== $error && current_user_can( 'manage_options' ) ) {
-			$html .= '<p class="tmt-error" role="alert">' . esc_html( $error ) . '</p>';
+			$html .= '<p class="tmtracker-error" role="alert">' . esc_html( $error ) . '</p>';
 		}
 
 		$html .= '</div>';
@@ -92,7 +92,7 @@ class TMT_Renderer {
 	 * @return string
 	 */
 	private function render_stale_notice() {
-		return '<p class="tmt-stale-notice" role="status">'
+		return '<p class="tmtracker-stale-notice" role="status">'
 			. esc_html__( 'The source is currently unreachable: showing the last successful state.', 'training-meeting-tracker' )
 			. '</p>';
 	}
@@ -109,8 +109,8 @@ class TMT_Renderer {
 	 */
 	private function render_session_list( array $sessions, $heading, $section_class, $heading_id ) {
 		$html  = '<section class="' . esc_attr( $section_class ) . '" aria-labelledby="' . esc_attr( $heading_id ) . '">';
-		$html .= '<h2 class="tmt-heading" id="' . esc_attr( $heading_id ) . '">' . $heading . '</h2>';
-		$html .= '<ul class="tmt-list">';
+		$html .= '<h2 class="tmtracker-heading" id="' . esc_attr( $heading_id ) . '">' . $heading . '</h2>';
+		$html .= '<ul class="tmtracker-list">';
 
 		foreach ( $sessions as $session ) {
 			$html .= $this->render_session_item( $session );
@@ -136,22 +136,22 @@ class TMT_Renderer {
 		$formatted     = $this->format_date( $session_date );
 		$datetime_attr = $this->build_datetime_attr( $session_date, $session_time );
 
-		$html = '<li class="tmt-item">';
+		$html = '<li class="tmtracker-item">';
 
 		if ( '' !== $url ) {
-			$html .= '<a class="tmt-link" href="' . esc_url( $url ) . '">'
+			$html .= '<a class="tmtracker-link" href="' . esc_url( $url ) . '">'
 				. esc_html( $title ) . '</a>';
 		} else {
-			$html .= '<span class="tmt-title">' . esc_html( $title ) . '</span>';
+			$html .= '<span class="tmtracker-title">' . esc_html( $title ) . '</span>';
 		}
 
-		$html .= ' <span class="tmt-meta">';
+		$html .= ' <span class="tmtracker-meta">';
 		$html .= '<time datetime="' . esc_attr( $datetime_attr ) . '">'
 			. esc_html( $formatted ) . '</time>';
 
 		if ( '' !== $session_time ) {
-			$html .= '<span class="tmt-separator" aria-hidden="true"> · </span>';
-			$html .= '<span class="tmt-time">' . esc_html( $session_time ) . '</span>';
+			$html .= '<span class="tmtracker-separator" aria-hidden="true"> · </span>';
+			$html .= '<span class="tmtracker-time">' . esc_html( $session_time ) . '</span>';
 		}
 
 		$html .= '</span>';
@@ -194,10 +194,10 @@ class TMT_Renderer {
 			$grouped = array_slice( $grouped, 0, $limit, true );
 		}
 
-		$heading_id = 'tmt-past-heading';
+		$heading_id = 'tmtracker-past-heading';
 
-		$html  = '<section class="tmt-past" aria-labelledby="' . esc_attr( $heading_id ) . '">';
-		$html .= '<h2 class="tmt-heading" id="' . esc_attr( $heading_id ) . '">'
+		$html  = '<section class="tmtracker-past" aria-labelledby="' . esc_attr( $heading_id ) . '">';
+		$html .= '<h2 class="tmtracker-heading" id="' . esc_attr( $heading_id ) . '">'
 			. esc_html__( 'Minutes', 'training-meeting-tracker' ) . '</h2>';
 
 		foreach ( $grouped as $year => $year_sessions ) {
@@ -208,8 +208,8 @@ class TMT_Renderer {
 				}
 			);
 
-			$html .= '<h3 class="tmt-year">' . esc_html( $year ) . '</h3>';
-			$html .= '<ul class="tmt-list">';
+			$html .= '<h3 class="tmtracker-year">' . esc_html( $year ) . '</h3>';
+			$html .= '<ul class="tmtracker-list">';
 
 			foreach ( $year_sessions as $session ) {
 				$html .= $this->render_past_session_item( $session );
@@ -234,18 +234,18 @@ class TMT_Renderer {
 		$url          = isset( $session['url'] ) ? $session['url'] : '';
 		$minutes_date = isset( $session['minutes_date'] ) ? $session['minutes_date'] : '';
 
-		$html = '<li class="tmt-item">';
+		$html = '<li class="tmtracker-item">';
 
 		if ( '' !== $url ) {
-			$html .= '<a class="tmt-link" href="' . esc_url( $url ) . '">'
+			$html .= '<a class="tmtracker-link" href="' . esc_url( $url ) . '">'
 				. esc_html( $title ) . '</a>';
 		} else {
-			$html .= '<span class="tmt-title">' . esc_html( $title ) . '</span>';
+			$html .= '<span class="tmtracker-title">' . esc_html( $title ) . '</span>';
 		}
 
 		if ( '' !== $minutes_date ) {
 			$formatted = $this->format_date( $minutes_date );
-			$html     .= ' <span class="tmt-meta">'
+			$html     .= ' <span class="tmtracker-meta">'
 				. sprintf(
 					/* translators: %s: minutes date in DD.MM.YYYY format. */
 					esc_html__( 'Minutes from %s', 'training-meeting-tracker' ),
@@ -279,7 +279,7 @@ class TMT_Renderer {
 		$datetime_at = gmdate( 'c', $timestamp );
 		$time_html   = '<time datetime="' . esc_attr( $datetime_at ) . '">' . esc_html( $formatted ) . '</time>';
 
-		return '<p class="tmt-generated-at">'
+		return '<p class="tmtracker-generated-at">'
 			. sprintf(
 				/* translators: %s: timestamp of the last update. */
 				esc_html__( 'Updated: %s', 'training-meeting-tracker' ),

@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Training Meeting Tracker 0.2.0\n"
+"Project-Id-Version: Training Meeting Tracker 0.1.1\n"
 "Report-Msgid-Bugs-To: https://github.com/rfluethi/training-meeting-tracker/issues\n"
 "POT-Creation-Date: 2026-05-23 09:14+0000\n"
 "PO-Revision-Date: 2026-05-23 09:14+0000\n"
@@ -19,125 +19,125 @@ msgstr ""
 
 
 #. translators: %d: HTTP status code.
-#: includes/class-tmt-fetcher.php
+#: includes/class-tmtracker-fetcher.php
 msgid "HTTP error %d while loading session data."
 msgstr "HTTP-Fehler %d beim Laden der Sitzungsdaten."
 
-#: includes/class-tmt-fetcher.php
+#: includes/class-tmtracker-fetcher.php
 msgid "Session data could not be parsed as JSON."
 msgstr "Sitzungsdaten konnten nicht als JSON gelesen werden."
 
-#: includes/class-tmt-fetcher.php
+#: includes/class-tmtracker-fetcher.php
 msgid "Session data has an unknown schema version."
 msgstr "Sitzungsdaten haben eine unbekannte Schema-Version."
 
-#: includes/class-tmt-renderer.php
+#: includes/class-tmtracker-renderer.php
 msgid "Session data is being prepared."
 msgstr "Sitzungsdaten werden vorbereitet."
 
-#: includes/class-tmt-renderer.php
+#: includes/class-tmtracker-renderer.php
 msgid "The source is currently unreachable: showing the last successful state."
 msgstr "Aktuell kann die Quelle nicht erreicht werden: angezeigt wird der letzte erfolgreiche Stand."
 
-#: includes/class-tmt-renderer.php
+#: includes/class-tmtracker-renderer.php
 msgid "Upcoming meetings"
 msgstr "Anstehende Sitzungen"
 
-#: includes/class-tmt-renderer.php
+#: includes/class-tmtracker-renderer.php
 msgid "Meetings in progress"
 msgstr "Sitzungen in Bearbeitung"
 
-#: includes/class-tmt-renderer.php
+#: includes/class-tmtracker-renderer.php
 msgid "Minutes"
 msgstr "Protokolle"
 
 #. translators: %s: minutes date in DD.MM.YYYY format.
-#: includes/class-tmt-renderer.php
+#: includes/class-tmtracker-renderer.php
 msgid "Minutes from %s"
 msgstr "Protokoll vom %s"
 
 #. translators: %s: timestamp of the last update.
-#: includes/class-tmt-renderer.php
+#: includes/class-tmtracker-renderer.php
 msgid "Updated: %s"
 msgstr "Stand: %s"
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Data source and cache"
 msgstr "Datenquelle und Cache"
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "JSON URL"
 msgstr "JSON-URL"
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Cache duration (hours)"
 msgstr "Cache-Dauer (Stunden)"
 
-#: includes/class-tmt-settings.php
-msgid "DACH Sessions List"
-msgstr "DACH-Sitzungsliste"
+#: includes/class-tmtracker-settings.php
+msgid "Training Meeting Tracker"
+msgstr "Training Meeting Tracker"
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "The session list is fed by a JSON file. Usually that is the file generated automatically on the data branch of the team repository."
 msgstr "Die Liste der Sitzungen wird aus einer JSON-Datei gespeist. Üblicherweise ist das die Datei, die im data-Branch des Team-Repos automatisch erzeugt wird."
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Full URL to sitzungen.json."
 msgstr "Vollständige URL zur sitzungen.json."
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "How long a successful fetch is cached before it is fetched again. Values: 1 to 168."
 msgstr "Wie lange ein erfolgreicher Abruf gecached wird, bevor er neu geholt wird. Werte: 1 bis 168."
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Cache cleared. The next page view will reload the session data."
 msgstr "Cache wurde geleert. Der nächste Aufruf der Seite lädt die Sitzungsdaten neu."
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Session data was refreshed successfully."
 msgstr "Sitzungsdaten wurden erfolgreich aktualisiert."
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Refresh failed. The source could not be loaded; the last successful state is kept."
 msgstr "Aktualisierung fehlgeschlagen. Die Quelle konnte nicht geladen werden; der letzte erfolgreiche Stand bleibt erhalten."
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Cache"
 msgstr "Cache"
 
 #. translators: %s: time of the last successful JSON generation.
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Last successfully read data state: %s"
 msgstr "Letzter erfolgreich gelesener Datenstand: %s"
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "No data loaded yet."
 msgstr "Noch keine Daten gelesen."
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Refresh now"
 msgstr "Jetzt aktualisieren"
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Clear cache now"
 msgstr "Cache jetzt leeren"
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "\"Refresh now\" immediately fetches the data from the source. \"Clear cache now\" only drops the cache; the next page view triggers a new fetch."
 msgstr "„Jetzt aktualisieren“ lädt die Daten sofort von der Quelle. „Cache jetzt leeren“ verwirft nur den Cache; der nächste Seitenaufruf löst dann einen neuen Abruf aus."
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Usage"
 msgstr "Verwendung"
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Place the shortcode on a page or post:"
 msgstr "Shortcode in einer Seite oder einem Beitrag einsetzen:"
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "With optional attributes:"
 msgstr "Mit optionalen Attributen:"
 
-#: includes/class-tmt-settings.php
+#: includes/class-tmtracker-settings.php
 msgid "Permission denied."
 msgstr "Keine Berechtigung."

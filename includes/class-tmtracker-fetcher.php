@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Fetches and caches the JSON data.
  */
-class TMT_Fetcher {
+class TMTracker_Fetcher {
 
 	/**
 	 * Supported schema major version.
@@ -26,11 +26,11 @@ class TMT_Fetcher {
 	 * @return string
 	 */
 	public function get_url() {
-		$settings = (array) get_option( TMT_OPTION_SETTINGS, array() );
+		$settings = (array) get_option( TMTRACKER_OPTION_SETTINGS, array() );
 		$url      = isset( $settings['json_url'] ) ? (string) $settings['json_url'] : '';
 
 		if ( '' === $url ) {
-			$url = TMT_DEFAULT_JSON_URL;
+			$url = TMTRACKER_DEFAULT_JSON_URL;
 		}
 
 		return $url;
@@ -42,8 +42,8 @@ class TMT_Fetcher {
 	 * @return int
 	 */
 	public function get_cache_hours() {
-		$settings = (array) get_option( TMT_OPTION_SETTINGS, array() );
-		$hours    = isset( $settings['cache_hours'] ) ? (int) $settings['cache_hours'] : TMT_DEFAULT_CACHE_HOURS;
+		$settings = (array) get_option( TMTRACKER_OPTION_SETTINGS, array() );
+		$hours    = isset( $settings['cache_hours'] ) ? (int) $settings['cache_hours'] : TMTRACKER_DEFAULT_CACHE_HOURS;
 
 		if ( $hours < 1 ) {
 			$hours = 1;
@@ -63,7 +63,7 @@ class TMT_Fetcher {
 	 */
 	public function get_data( $force_refresh = false ) {
 		if ( ! $force_refresh ) {
-			$cached = get_transient( TMT_TRANSIENT_DATA );
+			$cached = get_transient( TMTRACKER_TRANSIENT_DATA );
 			if ( false !== $cached && is_array( $cached ) ) {
 				return array(
 					'data'  => $cached,
@@ -77,11 +77,11 @@ class TMT_Fetcher {
 
 		if ( null !== $fresh['data'] ) {
 			set_transient(
-				TMT_TRANSIENT_DATA,
+				TMTRACKER_TRANSIENT_DATA,
 				$fresh['data'],
 				HOUR_IN_SECONDS * $this->get_cache_hours()
 			);
-			update_option( TMT_OPTION_LAST_GOOD, $fresh['data'], false );
+			update_option( TMTRACKER_OPTION_LAST_GOOD, $fresh['data'], false );
 
 			return array(
 				'data'  => $fresh['data'],
@@ -91,7 +91,7 @@ class TMT_Fetcher {
 		}
 
 		// Fallback to the last successful response.
-		$last_good = get_option( TMT_OPTION_LAST_GOOD, null );
+		$last_good = get_option( TMTRACKER_OPTION_LAST_GOOD, null );
 		if ( is_array( $last_good ) ) {
 			return array(
 				'data'  => $last_good,
@@ -113,7 +113,7 @@ class TMT_Fetcher {
 	 * @return void
 	 */
 	public function clear_cache() {
-		delete_transient( TMT_TRANSIENT_DATA );
+		delete_transient( TMTRACKER_TRANSIENT_DATA );
 	}
 
 	/**
@@ -132,7 +132,7 @@ class TMT_Fetcher {
 				'headers'    => array(
 					'Accept' => 'application/json',
 				),
-				'user-agent' => 'TrainingMeetingTracker/' . TMT_VERSION . '; ' . home_url(),
+				'user-agent' => 'TrainingMeetingTracker/' . TMTRACKER_VERSION . '; ' . home_url(),
 			)
 		);
 

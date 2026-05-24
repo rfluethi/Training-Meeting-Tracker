@@ -3,7 +3,7 @@
  * Plugin Name:       Training Meeting Tracker
  * Plugin URI:        https://github.com/rfluethi/Training-Meeting-Tracker
  * Description:       WordPress plugin that displays the DACH training team's meetings on a WordPress page, sourced from GitHub issues.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Requires at least: 6.4
  * Tested up to:      7.0
  * Requires PHP:      7.4
@@ -23,35 +23,35 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin constants.
  */
-define( 'TMT_VERSION', '0.1.0' );
-define( 'TMT_PLUGIN_FILE', __FILE__ );
-define( 'TMT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'TMT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'TMT_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+define( 'TMTRACKER_VERSION', '0.1.1' );
+define( 'TMTRACKER_PLUGIN_FILE', __FILE__ );
+define( 'TMTRACKER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'TMTRACKER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'TMTRACKER_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
  * Default JSON URL (data branch of the team repository).
  */
-define( 'TMT_DEFAULT_JSON_URL', 'https://raw.githubusercontent.com/rfluethi/learn-wp-dach-team/data/sitzungen.json' );
+define( 'TMTRACKER_DEFAULT_JSON_URL', 'https://raw.githubusercontent.com/rfluethi/learn-wp-dach-team/data/sitzungen.json' );
 
 /**
  * Default cache duration in hours.
  */
-define( 'TMT_DEFAULT_CACHE_HOURS', 12 );
+define( 'TMTRACKER_DEFAULT_CACHE_HOURS', 12 );
 
 /**
  * Option keys.
  */
-define( 'TMT_OPTION_SETTINGS', 'tmt_settings' );
-define( 'TMT_OPTION_LAST_GOOD', 'tmt_last_good_data' );
-define( 'TMT_TRANSIENT_DATA', 'tmt_session_data' );
+define( 'TMTRACKER_OPTION_SETTINGS', 'tmtracker_settings' );
+define( 'TMTRACKER_OPTION_LAST_GOOD', 'tmtracker_last_good_data' );
+define( 'TMTRACKER_TRANSIENT_DATA', 'tmtracker_session_data' );
 
 // Load classes.
-require_once TMT_PLUGIN_DIR . 'includes/class-tmt-plugin.php';
-require_once TMT_PLUGIN_DIR . 'includes/class-tmt-fetcher.php';
-require_once TMT_PLUGIN_DIR . 'includes/class-tmt-renderer.php';
-require_once TMT_PLUGIN_DIR . 'includes/class-tmt-shortcode.php';
-require_once TMT_PLUGIN_DIR . 'includes/class-tmt-settings.php';
+require_once TMTRACKER_PLUGIN_DIR . 'includes/class-tmtracker-plugin.php';
+require_once TMTRACKER_PLUGIN_DIR . 'includes/class-tmtracker-fetcher.php';
+require_once TMTRACKER_PLUGIN_DIR . 'includes/class-tmtracker-renderer.php';
+require_once TMTRACKER_PLUGIN_DIR . 'includes/class-tmtracker-shortcode.php';
+require_once TMTRACKER_PLUGIN_DIR . 'includes/class-tmtracker-settings.php';
 
 /**
  * Bootstrap.
@@ -59,7 +59,7 @@ require_once TMT_PLUGIN_DIR . 'includes/class-tmt-settings.php';
 add_action(
 	'plugins_loaded',
 	static function () {
-		TMT_Plugin::instance()->init();
+		TMTracker_Plugin::instance()->init();
 	}
 );
 

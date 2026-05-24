@@ -2,8 +2,8 @@
 /**
  * Test bootstrap.
  *
- * Provides the minimum of WordPress functions that TMT_Renderer and
- * TMT_Fetcher need to run outside of WordPress. We do this on purpose
+ * Provides the minimum of WordPress functions that TMTracker_Renderer and
+ * TMTracker_Fetcher need to run outside of WordPress. We do this on purpose
  * instead of pulling in wp-phpunit, so the tests stay free of heavy
  * infrastructure.
  *
@@ -19,23 +19,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants the source files reference at load time.
-if ( ! defined( 'TMT_VERSION' ) ) {
-	define( 'TMT_VERSION', '0.0.0-test' );
+if ( ! defined( 'TMTRACKER_VERSION' ) ) {
+	define( 'TMTRACKER_VERSION', '0.0.0-test' );
 }
-if ( ! defined( 'TMT_OPTION_SETTINGS' ) ) {
-	define( 'TMT_OPTION_SETTINGS', 'tmt_settings' );
+if ( ! defined( 'TMTRACKER_OPTION_SETTINGS' ) ) {
+	define( 'TMTRACKER_OPTION_SETTINGS', 'tmtracker_settings' );
 }
-if ( ! defined( 'TMT_OPTION_LAST_GOOD' ) ) {
-	define( 'TMT_OPTION_LAST_GOOD', 'tmt_last_good_data' );
+if ( ! defined( 'TMTRACKER_OPTION_LAST_GOOD' ) ) {
+	define( 'TMTRACKER_OPTION_LAST_GOOD', 'tmtracker_last_good_data' );
 }
-if ( ! defined( 'TMT_TRANSIENT_DATA' ) ) {
-	define( 'TMT_TRANSIENT_DATA', 'tmt_session_data' );
+if ( ! defined( 'TMTRACKER_TRANSIENT_DATA' ) ) {
+	define( 'TMTRACKER_TRANSIENT_DATA', 'tmtracker_session_data' );
 }
-if ( ! defined( 'TMT_DEFAULT_JSON_URL' ) ) {
-	define( 'TMT_DEFAULT_JSON_URL', 'https://example.invalid/sitzungen.json' );
+if ( ! defined( 'TMTRACKER_DEFAULT_JSON_URL' ) ) {
+	define( 'TMTRACKER_DEFAULT_JSON_URL', 'https://example.invalid/sitzungen.json' );
 }
-if ( ! defined( 'TMT_DEFAULT_CACHE_HOURS' ) ) {
-	define( 'TMT_DEFAULT_CACHE_HOURS', 12 );
+if ( ! defined( 'TMTRACKER_DEFAULT_CACHE_HOURS' ) ) {
+	define( 'TMTRACKER_DEFAULT_CACHE_HOURS', 12 );
 }
 if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
 	define( 'HOUR_IN_SECONDS', 3600 );
@@ -74,29 +74,29 @@ function esc_url_raw( $url ) {
 
 // ---- Option/transient stubs ----
 
-$GLOBALS['tmt_test_options']    = array();
-$GLOBALS['tmt_test_transients'] = array();
+$GLOBALS['tmtracker_test_options']    = array();
+$GLOBALS['tmtracker_test_transients'] = array();
 
 function get_option( $key, $default = false ) {
-	return array_key_exists( $key, $GLOBALS['tmt_test_options'] )
-		? $GLOBALS['tmt_test_options'][ $key ]
+	return array_key_exists( $key, $GLOBALS['tmtracker_test_options'] )
+		? $GLOBALS['tmtracker_test_options'][ $key ]
 		: $default;
 }
 function update_option( $key, $value, $autoload = null ) {
-	$GLOBALS['tmt_test_options'][ $key ] = $value;
+	$GLOBALS['tmtracker_test_options'][ $key ] = $value;
 	return true;
 }
 function get_transient( $key ) {
-	return array_key_exists( $key, $GLOBALS['tmt_test_transients'] )
-		? $GLOBALS['tmt_test_transients'][ $key ]
+	return array_key_exists( $key, $GLOBALS['tmtracker_test_transients'] )
+		? $GLOBALS['tmtracker_test_transients'][ $key ]
 		: false;
 }
 function set_transient( $key, $value, $expiration = 0 ) {
-	$GLOBALS['tmt_test_transients'][ $key ] = $value;
+	$GLOBALS['tmtracker_test_transients'][ $key ] = $value;
 	return true;
 }
 function delete_transient( $key ) {
-	unset( $GLOBALS['tmt_test_transients'][ $key ] );
+	unset( $GLOBALS['tmtracker_test_transients'][ $key ] );
 	return true;
 }
 
@@ -133,12 +133,12 @@ if ( ! function_exists( 'wp_remote_retrieve_body' ) ) {
 // ---- Plugin source loading ----
 
 $plugin_dir = dirname( __DIR__ ) . '/includes/';
-require_once $plugin_dir . 'class-tmt-fetcher.php';
-require_once $plugin_dir . 'class-tmt-renderer.php';
+require_once $plugin_dir . 'class-tmtracker-fetcher.php';
+require_once $plugin_dir . 'class-tmtracker-renderer.php';
 
 // ---- Test framework (super minimal) ----
 
-class TMT_Test_Result {
+class TMTRACKER_Test_Result {
 	public static $pass  = 0;
 	public static $fail  = 0;
 	public static $names = array();
@@ -155,28 +155,28 @@ class TMT_Test_Result {
 	}
 }
 
-function tmt_test( $name, callable $fn ) {
+function tmtracker_test( $name, callable $fn ) {
 	try {
 		$fn();
-		TMT_Test_Result::ok( $name );
+		TMTRACKER_Test_Result::ok( $name );
 	} catch ( Throwable $e ) {
-		TMT_Test_Result::fail( $name, $e->getMessage() );
+		TMTRACKER_Test_Result::fail( $name, $e->getMessage() );
 	}
 }
 
-function tmt_assert_contains( $needle, $haystack, $label = '' ) {
+function tmtracker_assert_contains( $needle, $haystack, $label = '' ) {
 	if ( strpos( $haystack, $needle ) === false ) {
 		throw new RuntimeException( "Expected to find:\n            " . $needle . ( $label ? "\n          ({$label})" : '' ) );
 	}
 }
 
-function tmt_assert_not_contains( $needle, $haystack, $label = '' ) {
+function tmtracker_assert_not_contains( $needle, $haystack, $label = '' ) {
 	if ( strpos( $haystack, $needle ) !== false ) {
 		throw new RuntimeException( "Did not expect:\n            " . $needle . ( $label ? "\n          ({$label})" : '' ) );
 	}
 }
 
-function tmt_assert_equals( $expected, $actual ) {
+function tmtracker_assert_equals( $expected, $actual ) {
 	if ( $expected !== $actual ) {
 		throw new RuntimeException( "Expected: " . var_export( $expected, true ) . "\n          Actual:   " . var_export( $actual, true ) );
 	}

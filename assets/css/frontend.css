@@ -1,12 +1,12 @@
 /*
  * Training Meeting Tracker Frontend styles
  *
- * CSS prefix: tmt-
+ * CSS prefix: tmtracker-
  * No external dependencies.
  *
  * Theming: every visual choice is a custom property declared once at the top
- * of `.tmt-container`. Active themes can override these by:
- *   1. Setting `--tmt-…` directly in theme styles, or
+ * of `.tmtracker-container`. Active themes can override these by:
+ *   1. Setting `--tmtracker-…` directly in theme styles, or
  *   2. Adjusting the WordPress preset variables (`--wp--preset--color--*`,
  *      `--wp--preset--font-size--*`) used as fallbacks.
  *
@@ -18,118 +18,118 @@
  * indicator (which themes often forget) and a hover underline.
  */
 
-.tmt-container {
+.tmtracker-container {
 	/* --- Colors (theme.json aware) --- */
-	--tmt-color-text:        var(--wp--preset--color--foreground, currentColor);
-	--tmt-color-text-muted:  var(--wp--preset--color--contrast-2, #595959);
-	--tmt-color-text-subtle: var(--wp--preset--color--contrast-3, #767676);
-	--tmt-color-border:      var(--wp--preset--color--contrast-3, currentColor);
-	--tmt-color-error:       var(--wp--preset--color--vivid-red, #b32d2e);
+	--tmtracker-color-text:        var(--wp--preset--color--foreground, currentColor);
+	--tmtracker-color-text-muted:  var(--wp--preset--color--contrast-2, #595959);
+	--tmtracker-color-text-subtle: var(--wp--preset--color--contrast-3, #767676);
+	--tmtracker-color-border:      var(--wp--preset--color--contrast-3, currentColor);
+	--tmtracker-color-error:       var(--wp--preset--color--vivid-red, #b32d2e);
 
 	/* --- Typography --- */
-	--tmt-font-family:    inherit;
-	--tmt-font-size-base: 1em;
-	--tmt-font-size-sm:   0.9em;
-	--tmt-font-size-xs:   0.85em;
-	--tmt-font-size-lg:   1.1em;
-	--tmt-font-size-xl:   1.25em;
-	--tmt-line-height:    1.5;
-	--tmt-font-weight-heading: 600;
+	--tmtracker-font-family:    inherit;
+	--tmtracker-font-size-base: 1em;
+	--tmtracker-font-size-sm:   0.9em;
+	--tmtracker-font-size-xs:   0.85em;
+	--tmtracker-font-size-lg:   1.1em;
+	--tmtracker-font-size-xl:   1.25em;
+	--tmtracker-line-height:    1.5;
+	--tmtracker-font-weight-heading: 600;
 
 	/* --- Spacing --- */
-	--tmt-space-xs:  0.3em;
-	--tmt-space-sm:  0.5em;
-	--tmt-space-md:  0.75em;
-	--tmt-space-lg:  1em;
-	--tmt-space-xl:  1.5em;
+	--tmtracker-space-xs:  0.3em;
+	--tmtracker-space-sm:  0.5em;
+	--tmtracker-space-md:  0.75em;
+	--tmtracker-space-lg:  1em;
+	--tmtracker-space-xl:  1.5em;
 
 	/* --- Focus indicator --- */
-	--tmt-focus-outline-color:  currentColor;
-	--tmt-focus-outline-width:  2px;
-	--tmt-focus-outline-offset: 2px;
+	--tmtracker-focus-outline-color:  currentColor;
+	--tmtracker-focus-outline-width:  2px;
+	--tmtracker-focus-outline-offset: 2px;
 
-	font-family: var(--tmt-font-family);
-	line-height: var(--tmt-line-height);
-	color: var(--tmt-color-text);
-	margin: var(--tmt-space-xl) 0;
+	font-family: var(--tmtracker-font-family);
+	line-height: var(--tmtracker-line-height);
+	color: var(--tmtracker-color-text);
+	margin: var(--tmtracker-space-xl) 0;
 }
 
 /* Headings */
 
-.tmt-container .tmt-heading {
-	margin: var(--tmt-space-lg) 0 var(--tmt-space-sm);
-	font-size: var(--tmt-font-size-xl);
-	font-weight: var(--tmt-font-weight-heading);
+.tmtracker-container .tmtracker-heading {
+	margin: var(--tmtracker-space-lg) 0 var(--tmtracker-space-sm);
+	font-size: var(--tmtracker-font-size-xl);
+	font-weight: var(--tmtracker-font-weight-heading);
 }
 
-.tmt-container .tmt-year {
-	margin: var(--tmt-space-lg) 0 var(--tmt-space-xs);
-	font-size: var(--tmt-font-size-lg);
-	font-weight: var(--tmt-font-weight-heading);
+.tmtracker-container .tmtracker-year {
+	margin: var(--tmtracker-space-lg) 0 var(--tmtracker-space-xs);
+	font-size: var(--tmtracker-font-size-lg);
+	font-weight: var(--tmtracker-font-weight-heading);
 }
 
 /* Lists (upcoming, in-progress, past) */
 
-.tmt-container .tmt-list {
+.tmtracker-container .tmtracker-list {
 	list-style: none;
 	padding: 0;
-	margin: 0 0 var(--tmt-space-lg) 0;
+	margin: 0 0 var(--tmtracker-space-lg) 0;
 }
 
-.tmt-container .tmt-item {
-	padding: var(--tmt-space-xs) 0;
+.tmtracker-container .tmtracker-item {
+	padding: var(--tmtracker-space-xs) 0;
 }
 
-.tmt-container .tmt-meta {
-	font-size: var(--tmt-font-size-xs);
-	color: var(--tmt-color-text-subtle);
-	margin-left: var(--tmt-space-xs);
+.tmtracker-container .tmtracker-meta {
+	font-size: var(--tmtracker-font-size-xs);
+	color: var(--tmtracker-color-text-subtle);
+	margin-left: var(--tmtracker-space-xs);
 }
 
 /* Links: color is intentionally inherited from the theme. We only add a
    hover underline (themes often omit it on body links) and a focus indicator. */
 
-.tmt-container .tmt-link {
+.tmtracker-container .tmtracker-link {
 	text-decoration: underline;
 }
 
-.tmt-container .tmt-link:hover,
-.tmt-container .tmt-link:focus {
+.tmtracker-container .tmtracker-link:hover,
+.tmtracker-container .tmtracker-link:focus {
 	text-decoration: underline;
 }
 
 /* Status notices */
 
-.tmt-container .tmt-stale-notice {
-	font-size: var(--tmt-font-size-sm);
-	padding: var(--tmt-space-sm) var(--tmt-space-md);
-	border-left: 3px solid var(--tmt-color-border);
-	color: var(--tmt-color-text-muted);
-	margin: 0 0 var(--tmt-space-lg) 0;
+.tmtracker-container .tmtracker-stale-notice {
+	font-size: var(--tmtracker-font-size-sm);
+	padding: var(--tmtracker-space-sm) var(--tmtracker-space-md);
+	border-left: 3px solid var(--tmtracker-color-border);
+	color: var(--tmtracker-color-text-muted);
+	margin: 0 0 var(--tmtracker-space-lg) 0;
 }
 
-.tmt-container .tmt-generated-at {
-	margin-top: var(--tmt-space-xl);
-	font-size: var(--tmt-font-size-xs);
-	color: var(--tmt-color-text-subtle);
+.tmtracker-container .tmtracker-generated-at {
+	margin-top: var(--tmtracker-space-xl);
+	font-size: var(--tmtracker-font-size-xs);
+	color: var(--tmtracker-color-text-subtle);
 }
 
-.tmt-container.tmt-empty {
-	color: var(--tmt-color-text-muted);
+.tmtracker-container.tmtracker-empty {
+	color: var(--tmtracker-color-text-muted);
 	font-style: italic;
 }
 
-.tmt-container .tmt-error {
-	font-size: var(--tmt-font-size-sm);
-	color: var(--tmt-color-error);
+.tmtracker-container .tmtracker-error {
+	font-size: var(--tmtracker-font-size-sm);
+	color: var(--tmtracker-color-error);
 }
 
 /* Focus indicator for keyboard navigation. Necessary because some themes
    set `outline: none` on links. Uses currentColor so the indicator
    automatically follows the link color set by the theme. */
 
-.tmt-container .tmt-link:focus-visible {
-	outline: var(--tmt-focus-outline-width) solid var(--tmt-focus-outline-color);
-	outline-offset: var(--tmt-focus-outline-offset);
+.tmtracker-container .tmtracker-link:focus-visible {
+	outline: var(--tmtracker-focus-outline-width) solid var(--tmtracker-focus-outline-color);
+	outline-offset: var(--tmtracker-focus-outline-offset);
 	border-radius: 2px;
 }

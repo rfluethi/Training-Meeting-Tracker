@@ -30,10 +30,19 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Stage plugin under correct slug
+        run: |
+          # The repository name on GitHub is "Training-Meeting-Tracker" (CamelCase).
+          # The plugin slug and text domain are "training-meeting-tracker" (lowercase).
+          # To make Plugin Check activate the plugin under the correct slug, we
+          # stage the files in a directory that matches the slug.
+          mkdir -p /tmp/build/training-meeting-tracker
+          rsync -a --exclude='.git' --exclude='.github' ./ /tmp/build/training-meeting-tracker/
+
       - name: Run Plugin Check
         uses: WordPress/plugin-check-action@v1
         with:
-          build-dir: './'
+          build-dir: '/tmp/build/training-meeting-tracker'
           # We leave out the wp.org distribution category (plugin_repo) because
           # this plugin is intentionally distributed via GitHub releases and
           # not through the wp.org plugin directory. All technical code

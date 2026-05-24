@@ -26,7 +26,7 @@ Closes #
 - [ ] `CHANGELOG.md` updated under `[Unreleased]`
 - [ ] On breaking changes: schema version bumped (plugin and build script)
 - [ ] On string changes: `.pot` file updated, `.po` translations updated if needed
-- [ ] On version bump: version in plugin header, `TMT_VERSION`, `readme.txt` bumped in sync
+- [ ] On version bump: version in plugin header, `TMTRACKER_VERSION`, `readme.txt` bumped in sync
 - [ ] Documentation updated when behaviour changes
 
 ## Test instructions

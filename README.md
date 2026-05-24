@@ -62,12 +62,12 @@ training-meeting-tracker/
   uninstall.php                   Cleanup on uninstall
   readme.txt                      wp.org format readme
   includes/
-    class-tmt-plugin.php          Bootstrap class
-    class-tmt-fetcher.php         HTTP, cache, schema validation
-    class-tmt-renderer.php        HTML rendering, date formatting
-    class-tmt-shortcode.php       [training_meeting_tracker]
-    class-tmt-settings.php        Settings API, clear cache
-  assets/css/frontend.css         Frontend styles (prefix tmt-)
+    class-tmtracker-plugin.php          Bootstrap class
+    class-tmtracker-fetcher.php         HTTP, cache, schema validation
+    class-tmtracker-renderer.php        HTML rendering, date formatting
+    class-tmtracker-shortcode.php       [training_meeting_tracker]
+    class-tmtracker-settings.php        Settings API, clear cache
+  assets/css/frontend.css         Frontend styles (prefix tmtracker-)
   languages/
     training-meeting-tracker.pot
     training-meeting-tracker-de_DE.po

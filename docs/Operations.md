@@ -97,7 +97,7 @@ Open the action log and look at which step failed.
 
 **Symptom:** Plugin shows only "Session data is being prepared." although the JSON exists.
 
-- Schema version mismatch. The plugin accepts only the version in `TMT_Fetcher::SUPPORTED_SCHEMA_VERSION`. If the `data` branch still carries an older version, trigger the action manually once (see 2.4). The current build script writes the JSON in the supported schema version.
+- Schema version mismatch. The plugin accepts only the version in `TMTracker_Fetcher::SUPPORTED_SCHEMA_VERSION`. If the `data` branch still carries an older version, trigger the action manually once (see 2.4). The current build script writes the JSON in the supported schema version.
 
 ### 3.5 Plugin Check warnings about "WP" in plugin names
 
@@ -108,7 +108,7 @@ Not relevant to this plugin. The previous plugin (Learn WP DACH Sitzungen) carri
 When the data schema needs breaking changes (for example renaming a required field, changing the top level structure):
 
 1. Bump `SCHEMA_VERSION` in the build script.
-2. Bump `TMT_Fetcher::SUPPORTED_SCHEMA_VERSION` in the plugin in parallel.
+2. Bump `TMTracker_Fetcher::SUPPORTED_SCHEMA_VERSION` in the plugin in parallel.
 3. Tag both repositories in coordinated releases.
 4. Plan a transition window. The old plugin version will reject the new JSON (schema mismatch, falls back to last good version). The new state only kicks in once the plugin is updated.
 

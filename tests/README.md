@@ -1,7 +1,7 @@
 # Tests
 
-Lightweight integration tests for `TMT_Fetcher` (schema + normalization) and
-`TMT_Renderer` (HTML output). They run without `wp-phpunit`, against
+Lightweight integration tests for `TMTracker_Fetcher` (schema + normalization) and
+`TMTracker_Renderer` (HTML output). They run without `wp-phpunit`, against
 hand-written stubs for the few WordPress functions the source files touch
 (`esc_*`, `__`, `wp_date`, `get_option`, transients, …).
 
@@ -29,8 +29,8 @@ Exit code 0 means all tests passed, 1 means at least one failed.
 ## Extending the suite
 
 Add new fixtures under `tests/fixtures/`. Add new test cases at the bottom of
-`tests/run-tests.php` using `tmt_test( $name, callable )` and the
-`tmt_assert_*` helpers defined in `tests/bootstrap.php`.
+`tests/run-tests.php` using `tmtracker_test( $name, callable )` and the
+`tmtracker_assert_*` helpers defined in `tests/bootstrap.php`.
 
 The intent is to keep this suite installable without composer or a WordPress
 install. `php tests/run-tests.php` from a fresh checkout has to work.

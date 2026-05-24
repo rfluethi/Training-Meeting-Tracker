@@ -48,13 +48,13 @@ Training-Meeting-Tracker/
       config.yml
     pull_request_template.md
   includes/
-    class-tmt-plugin.php         Bootstrap class, loads sub classes
-    class-tmt-fetcher.php        HTTP plus transient cache plus schema validation
-    class-tmt-renderer.php       HTML rendering, date formatting
-    class-tmt-shortcode.php      Shortcode [training_meeting_tracker]
-    class-tmt-settings.php       Settings API, clear cache
+    class-tmtracker-plugin.php         Bootstrap class, loads sub classes
+    class-tmtracker-fetcher.php        HTTP plus transient cache plus schema validation
+    class-tmtracker-renderer.php       HTML rendering, date formatting
+    class-tmtracker-shortcode.php      Shortcode [training_meeting_tracker]
+    class-tmtracker-settings.php       Settings API, clear cache
   assets/
-    css/frontend.css             Frontend styles, prefix tmt-
+    css/frontend.css             Frontend styles, prefix tmtracker-
   languages/
     training-meeting-tracker.pot
     training-meeting-tracker-de_DE.po
@@ -77,27 +77,27 @@ Training-Meeting-Tracker/
 
 ```text
               +--------------------+
-              |    TMT_Plugin      |  Singleton, loads and wires sub classes
+              |    TMTracker_Plugin      |  Singleton, loads and wires sub classes
               +---------+----------+
                         |
        +----------------+----------------+
        |                |                |
        v                v                v
 +--------------+ +--------------+ +--------------+
-| TMT_Fetcher  | | TMT_Renderer | | TMT_Settings |
+| TMTracker_Fetcher  | | TMTracker_Renderer | | TMTracker_Settings |
 +------+-------+ +--------------+ +--------------+
        |                ^
        |                |
        |        +-------+-------+
-       +------->| TMT_Shortcode |
+       +------->| TMTracker_Shortcode |
                 +---------------+
 ```
 
-**`TMT_Plugin`** (`includes/class-tmt-plugin.php`)
+**`TMTracker_Plugin`** (`includes/class-tmtracker-plugin.php`)
 Singleton bootstrap. On `plugins_loaded` it instantiates the other classes and calls `register()` on shortcode and settings. Also registers the stylesheet (not enqueued, the shortcode enqueues on demand).
 
-**`TMT_Fetcher`** (`includes/class-tmt-fetcher.php`)
-HTTP layer with caching and fallback. Reads URL and cache TTL from plugin options, fetches JSON via `wp_remote_get`, validates against the schema version and stores in two places: a transient (short term) and an option `tmt_last_good_data` (persistent fallback).
+**`TMTracker_Fetcher`** (`includes/class-tmtracker-fetcher.php`)
+HTTP layer with caching and fallback. Reads URL and cache TTL from plugin options, fetches JSON via `wp_remote_get`, validates against the schema version and stores in two places: a transient (short term) and an option `tmtracker_last_good_data` (persistent fallback).
 
 Important methods:
 
@@ -105,18 +105,18 @@ Important methods:
 - `clear_cache()`: deletes the transient, the option stays as fallback.
 - `validate_schema()` and `normalize_session()`: private, check the schema version and drop invalid entries.
 
-**`TMT_Renderer`** (`includes/class-tmt-renderer.php`)
+**`TMTracker_Renderer`** (`includes/class-tmtracker-renderer.php`)
 Pure output class, no data operations. Receives validated data and returns HTML. The format function `format_date()` converts `YYYY-MM-DD` into `DD.MM.YYYY`. All strings are run through `esc_html()`, `esc_url()`, `esc_attr()`.
 
-**`TMT_Shortcode`** (`includes/class-tmt-shortcode.php`)
+**`TMTracker_Shortcode`** (`includes/class-tmtracker-shortcode.php`)
 Glue: parses shortcode attributes, calls fetcher and renderer, enqueues the stylesheet only when the shortcode is actually used.
 
-**`TMT_Settings`** (`includes/class-tmt-settings.php`)
+**`TMTracker_Settings`** (`includes/class-tmtracker-settings.php`)
 Settings API wrapper. Registers the options group, builds the admin page under Settings, Training Meeting Tracker, handles the Clear cache and Refresh now POSTs with nonce checks.
 
 ## 5. Data model and schema versioning
 
-The schema version is defined in two parallel places: `TMT_Fetcher::SUPPORTED_SCHEMA_VERSION` (PHP, plugin side) and `SCHEMA_VERSION` (Python, build script). Bump both on breaking changes.
+The schema version is defined in two parallel places: `TMTracker_Fetcher::SUPPORTED_SCHEMA_VERSION` (PHP, plugin side) and `SCHEMA_VERSION` (Python, build script). Bump both on breaking changes.
 
 Current version: v2 (inherited from the predecessor plugin at 0.3.0). Accepted fields:
 
@@ -140,27 +140,27 @@ Bucket routing in the build script:
 ## 6. Constants and options
 
 ```php
-TMT_VERSION              // Plugin version, synchronised with header
-TMT_PLUGIN_FILE          // __FILE__ of the main file
-TMT_PLUGIN_DIR / _URL    // path and URL of the plugin folder
-TMT_PLUGIN_BASENAME      // for plugin_basename()
-TMT_DEFAULT_JSON_URL     // Default URL for sitzungen.json
-TMT_DEFAULT_CACHE_HOURS  // Default cache TTL (12)
-TMT_OPTION_SETTINGS      // Option key for user settings
-TMT_OPTION_LAST_GOOD     // Option key for fallback data
-TMT_TRANSIENT_DATA       // Transient key for cached data
+TMTRACKER_VERSION              // Plugin version, synchronised with header
+TMTRACKER_PLUGIN_FILE          // __FILE__ of the main file
+TMTRACKER_PLUGIN_DIR / _URL    // path and URL of the plugin folder
+TMTRACKER_PLUGIN_BASENAME      // for plugin_basename()
+TMTRACKER_DEFAULT_JSON_URL     // Default URL for sitzungen.json
+TMTRACKER_DEFAULT_CACHE_HOURS  // Default cache TTL (12)
+TMTRACKER_OPTION_SETTINGS      // Option key for user settings
+TMTRACKER_OPTION_LAST_GOOD     // Option key for fallback data
+TMTRACKER_TRANSIENT_DATA       // Transient key for cached data
 ```
 
 ## 7. Extension points
 
-The plugin does not currently expose any filters or actions. Kept intentionally small. If extensions arrive, filters belong in `TMT_Renderer` (HTML manipulation) and in `TMT_Fetcher` (data manipulation before caching). Filter prefix convention: `tmt_`.
+The plugin does not currently expose any filters or actions. Kept intentionally small. If extensions arrive, filters belong in `TMTracker_Renderer` (HTML manipulation) and in `TMTracker_Fetcher` (data manipulation before caching). Filter prefix convention: `tmtracker_`.
 
 Possible future filters:
 
 ```php
-apply_filters( 'tmt_sessions_data', $data );                  // after schema validation
-apply_filters( 'tmt_render_next_session', $html, $session );
-apply_filters( 'tmt_render_past_session', $html, $session );
+apply_filters( 'tmtracker_sessions_data', $data );                  // after schema validation
+apply_filters( 'tmtracker_render_next_session', $html, $session );
+apply_filters( 'tmtracker_render_past_session', $html, $session );
 ```
 
 ## 8. Release process
@@ -185,7 +185,7 @@ Three steps for a new version:
 1. **Update `CHANGELOG.md`.** Rename the `[Unreleased]` entry to `[X.Y.Z] - YYYY-MM-DD`, open a new `[Unreleased]` block on top, append compare links at the bottom.
 2. **Bump the version everywhere in sync:**
    - Plugin header in `training-meeting-tracker.php` (the `Version:` line)
-   - Constant `TMT_VERSION` in the same file
+   - Constant `TMTRACKER_VERSION` in the same file
    - `readme.txt` (the `Stable tag:` line)
 3. **Tag and push:**
    ```bash
@@ -210,11 +210,11 @@ Before pushing, run `composer lint` locally once. Saves a red CI build.
 
 - WordPress Coding Standards 3.x (`phpcs.xml`)
 - Tabs for indentation in PHP, spaces in JSON / YAML / Markdown (`.editorconfig`)
-- Class names: `TMT_Component`, file names `class-tmt-component.php` (WPCS convention)
-- Avoid global variables. If unavoidable (for example in `uninstall.php`), use the `tmt_` prefix.
+- Class names: `TMTracker_Component`, file names `class-tmtracker-component.php` (WPCS convention)
+- Avoid global variables. If unavoidable (for example in `uninstall.php`), use the `tmtracker_` prefix.
 - Strings always routed through `__()` / `esc_html__()` / `esc_attr__()` for i18n.
 - Output always escaped with `esc_html`, `esc_url`, `esc_attr`. Never directly echo variables.
-- Capability checks and nonces wherever user input is processed (see `TMT_Settings::handle_clear_cache()`).
+- Capability checks and nonces wherever user input is processed (see `TMTracker_Settings::handle_clear_cache()`).
 - No closing `?>` tags at the end of files.
 - ABSPATH guard in every PHP file (except `uninstall.php`, which has the `WP_UNINSTALL_PLUGIN` guard).
 

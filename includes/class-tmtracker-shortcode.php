@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Registers and renders the shortcode.
  */
-class TMT_Shortcode {
+class TMTracker_Shortcode {
 
 	/**
 	 * Shortcode tag.
@@ -20,24 +20,24 @@ class TMT_Shortcode {
 	/**
 	 * Fetcher.
 	 *
-	 * @var TMT_Fetcher
+	 * @var TMTracker_Fetcher
 	 */
 	private $fetcher;
 
 	/**
 	 * Renderer.
 	 *
-	 * @var TMT_Renderer
+	 * @var TMTracker_Renderer
 	 */
 	private $renderer;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param TMT_Fetcher  $fetcher  Fetcher instance.
-	 * @param TMT_Renderer $renderer Renderer instance.
+	 * @param TMTracker_Fetcher  $fetcher  Fetcher instance.
+	 * @param TMTracker_Renderer $renderer Renderer instance.
 	 */
-	public function __construct( TMT_Fetcher $fetcher, TMT_Renderer $renderer ) {
+	public function __construct( TMTracker_Fetcher $fetcher, TMTracker_Renderer $renderer ) {
 		$this->fetcher  = $fetcher;
 		$this->renderer = $renderer;
 	}
@@ -87,7 +87,7 @@ class TMT_Shortcode {
 
 		$result = $this->fetcher->get_data();
 
-		wp_enqueue_style( 'tmt-frontend' );
+		wp_enqueue_style( 'tmtracker-frontend' );
 
 		return $this->renderer->render(
 			$result['data'],
