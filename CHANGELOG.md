@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-24
+
+### Changed
+
+- Past meetings now display the meeting date (`session_date`) instead of the closing date of the issue (`minutes_date`). The label changes from "Protokoll vom" to "Sitzung vom" so the displayed date matches the linked issue.
+- The footer line "Stand: ..." ("Updated: ...") has been removed from the rendered output. The `render_generated_at` method was deleted from the renderer along with the unused translation strings.
+
+### Fixed
+
+- CI lint: `phpcs.xml` updated with the new prefixes (`tmtracker`, `TMTRACKER`, `TMTracker`).
+- CI lint: array alignment in `TMTracker_Settings::handle_clear_cache` and `handle_refresh_now`.
+- CI plugin-check: upgrade notice for 0.1.0 shortened from 344 to 235 characters (300 character limit).
+
 ## [0.1.1] - 2026-05-24
 
 ### Changed
@@ -41,6 +54,7 @@ This is the first release under the new name. The plugin is the functional succe
 
 Users of the predecessor plugin need to deactivate and remove it before installing this one. The shortcode changes from `[learn_wp_dach_sitzungen]` to `[training_meeting_tracker]` and has to be replaced on every page that uses it. Settings need to be re-entered because the options key prefix changed.
 
-[Unreleased]: https://github.com/rfluethi/Training-Meeting-Tracker/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/rfluethi/Training-Meeting-Tracker/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/rfluethi/Training-Meeting-Tracker/releases/tag/v0.1.2
 [0.1.1]: https://github.com/rfluethi/Training-Meeting-Tracker/releases/tag/v0.1.1
 [0.1.0]: https://github.com/rfluethi/Training-Meeting-Tracker/releases/tag/v0.1.0

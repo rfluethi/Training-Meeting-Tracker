@@ -130,7 +130,7 @@ tmtracker_test( 'renderer emits past section grouped by year, descending', funct
 		throw new RuntimeException( 'Years are not in descending order.' );
 	}
 
-	tmtracker_assert_contains( 'Minutes from', $html );
+	tmtracker_assert_contains( 'Meeting from', $html );
 	tmtracker_assert_contains( 'datetime="2026-04-12"', $html );
 } );
 

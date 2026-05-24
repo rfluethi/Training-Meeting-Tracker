@@ -53,12 +53,7 @@ msgstr ""
 
 #. translators: %s: minutes date in DD.MM.YYYY format.
 #: includes/class-tmtracker-renderer.php
-msgid "Minutes from %s"
-msgstr ""
-
-#. translators: %s: timestamp of the last update.
-#: includes/class-tmtracker-renderer.php
-msgid "Updated: %s"
+msgid "Meeting from %s"
 msgstr ""
 
 #: includes/class-tmtracker-settings.php

@@ -345,7 +345,7 @@ class TMTracker_Settings {
 
 		$redirect = add_query_arg(
 			array(
-				'page'             => self::PAGE_SLUG,
+				'page'                  => self::PAGE_SLUG,
 				'tmtracker-cache-clear' => '1',
 			),
 			admin_url( 'options-general.php' )
@@ -378,7 +378,7 @@ class TMTracker_Settings {
 
 		$redirect = add_query_arg(
 			array(
-				'page'         => self::PAGE_SLUG,
+				'page'              => self::PAGE_SLUG,
 				'tmtracker-refresh' => $status,
 			),
 			admin_url( 'options-general.php' )

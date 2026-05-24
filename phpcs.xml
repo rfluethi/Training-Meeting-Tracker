@@ -40,8 +40,9 @@
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="tmt"/>
-				<element value="TMT"/>
+				<element value="tmtracker"/>
+				<element value="TMTRACKER"/>
+				<element value="TMTracker"/>
 				<element value="training_meeting_tracker"/>
 			</property>
 		</properties>

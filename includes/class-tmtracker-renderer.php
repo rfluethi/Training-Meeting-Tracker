@@ -61,7 +61,6 @@ class TMTracker_Renderer {
 			$html .= $this->render_past_sessions( $data['past_sessions'], $years );
 		}
 
-		$html .= $this->render_generated_at( $data );
 		$html .= '</div>';
 
 		return $html;
@@ -232,7 +231,7 @@ class TMTracker_Renderer {
 	private function render_past_session_item( array $session ) {
 		$title        = isset( $session['title'] ) ? $session['title'] : '';
 		$url          = isset( $session['url'] ) ? $session['url'] : '';
-		$minutes_date = isset( $session['minutes_date'] ) ? $session['minutes_date'] : '';
+		$session_date = isset( $session['session_date'] ) ? $session['session_date'] : '';
 
 		$html = '<li class="tmtracker-item">';
 
@@ -243,13 +242,13 @@ class TMTracker_Renderer {
 			$html .= '<span class="tmtracker-title">' . esc_html( $title ) . '</span>';
 		}
 
-		if ( '' !== $minutes_date ) {
-			$formatted = $this->format_date( $minutes_date );
+		if ( '' !== $session_date ) {
+			$formatted = $this->format_date( $session_date );
 			$html     .= ' <span class="tmtracker-meta">'
 				. sprintf(
-					/* translators: %s: minutes date in DD.MM.YYYY format. */
-					esc_html__( 'Minutes from %s', 'training-meeting-tracker' ),
-					'<time datetime="' . esc_attr( $minutes_date ) . '">' . esc_html( $formatted ) . '</time>'
+					/* translators: %s: meeting date in DD.MM.YYYY format. */
+					esc_html__( 'Meeting from %s', 'training-meeting-tracker' ),
+					'<time datetime="' . esc_attr( $session_date ) . '">' . esc_html( $formatted ) . '</time>'
 				)
 				. '</span>';
 		}
@@ -257,35 +256,6 @@ class TMTracker_Renderer {
 		$html .= '</li>';
 
 		return $html;
-	}
-
-	/**
-	 * Footer notice: data freshness.
-	 *
-	 * @param array $data Session data.
-	 * @return string
-	 */
-	private function render_generated_at( array $data ) {
-		if ( empty( $data['generated_at'] ) ) {
-			return '';
-		}
-
-		$timestamp = strtotime( $data['generated_at'] );
-		if ( false === $timestamp ) {
-			return '';
-		}
-
-		$formatted   = wp_date( 'd.m.Y, H:i', $timestamp );
-		$datetime_at = gmdate( 'c', $timestamp );
-		$time_html   = '<time datetime="' . esc_attr( $datetime_at ) . '">' . esc_html( $formatted ) . '</time>';
-
-		return '<p class="tmtracker-generated-at">'
-			. sprintf(
-				/* translators: %s: timestamp of the last update. */
-				esc_html__( 'Updated: %s', 'training-meeting-tracker' ),
-				$time_html
-			)
-			. '</p>';
 	}
 
 	/**

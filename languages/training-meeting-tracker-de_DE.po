@@ -53,13 +53,8 @@ msgstr "Protokolle"
 
 #. translators: %s: minutes date in DD.MM.YYYY format.
 #: includes/class-tmtracker-renderer.php
-msgid "Minutes from %s"
-msgstr "Protokoll vom %s"
-
-#. translators: %s: timestamp of the last update.
-#: includes/class-tmtracker-renderer.php
-msgid "Updated: %s"
-msgstr "Stand: %s"
+msgid "Meeting from %s"
+msgstr "Sitzung vom %s"
 
 #: includes/class-tmtracker-settings.php
 msgid "Data source and cache"

@@ -4,7 +4,7 @@ Tags: shortcode, meetings, github, json
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,11 @@ By default 12 hours. Configurable in the plugin settings between 1 and 168 hours
 
 == Changelog ==
 
+= 0.1.2 =
+* Past meetings now show the meeting date instead of the closing date of the issue. The label changed from "Protokoll vom" to "Sitzung vom" so that the displayed date matches the linked issue.
+* "Stand: ..." line at the bottom of the rendered list removed.
+* CI fixes: phpcs.xml updated with the new prefixes; array alignment in settings; upgrade notice for 0.1.0 shortened below 300 characters.
+
 = 0.1.1 =
 * Settings menu now reads "Training Meeting Tracker" instead of the leftover "DACH Sessions List" / "DACH-Sitzungsliste" from the predecessor plugin.
 * WordPress Coding Standards compliance. Renamed all global identifiers to use a 4+ character prefix as required by WPCS: classes `TMTracker_*` (was `TMT_*`), constants `TMTRACKER_*`, hooks, options, transients and CSS classes `tmtracker_` / `tmtracker-` (was `tmt_` / `tmt-`). Class files renamed accordingly.
@@ -81,8 +86,11 @@ By default 12 hours. Configurable in the plugin settings between 1 and 168 hours
 
 == Upgrade Notice ==
 
+= 0.1.2 =
+Past meetings now show the meeting date instead of the closing date of the issue. Label changed to "Sitzung vom". The footer line "Stand: ..." has been removed. Plus CI cleanup.
+
 = 0.1.1 =
 Patch. Internal refactor to satisfy WordPress Coding Standards (longer global prefix). No user-visible behaviour change. Settings, cached data and shortcode usage stay compatible.
 
 = 0.1.0 =
-First release of the renamed plugin. If you are migrating from Learn DACH Sitzungen, deactivate and remove that plugin before installing this one. The shortcode changes from `[learn_wp_dach_sitzungen]` to `[training_meeting_tracker]`; replace it on every page that uses it. Settings need to be re-entered because the options key prefix changed.
+First release. If migrating from Learn DACH Sitzungen, deactivate that plugin first. The shortcode changes to `[training_meeting_tracker]` and must be replaced on every page. Settings need to be re-entered (options key prefix changed).

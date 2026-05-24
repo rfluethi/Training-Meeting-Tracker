@@ -3,7 +3,7 @@
  * Plugin Name:       Training Meeting Tracker
  * Plugin URI:        https://github.com/rfluethi/Training-Meeting-Tracker
  * Description:       WordPress plugin that displays the DACH training team's meetings on a WordPress page, sourced from GitHub issues.
- * Version:           0.1.1
+ * Version:           0.1.2
  * Requires at least: 6.4
  * Tested up to:      7.0
  * Requires PHP:      7.4
@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin constants.
  */
-define( 'TMTRACKER_VERSION', '0.1.1' );
+define( 'TMTRACKER_VERSION', '0.1.2' );
 define( 'TMTRACKER_PLUGIN_FILE', __FILE__ );
 define( 'TMTRACKER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'TMTRACKER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
