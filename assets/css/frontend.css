@@ -1,0 +1,135 @@
+/*
+ * Training Meeting Tracker Frontend styles
+ *
+ * CSS prefix: tmt-
+ * No external dependencies.
+ *
+ * Theming: every visual choice is a custom property declared once at the top
+ * of `.tmt-container`. Active themes can override these by:
+ *   1. Setting `--tmt-…` directly in theme styles, or
+ *   2. Adjusting the WordPress preset variables (`--wp--preset--color--*`,
+ *      `--wp--preset--font-size--*`) used as fallbacks.
+ *
+ * The plugin never sets a fixed width: the container flows with the
+ * surrounding layout.
+ *
+ * Link colors are deliberately NOT overridden by this stylesheet. Every
+ * `<a>` inherits the theme's link color. The plugin only adds a focus
+ * indicator (which themes often forget) and a hover underline.
+ */
+
+.tmt-container {
+	/* --- Colors (theme.json aware) --- */
+	--tmt-color-text:        var(--wp--preset--color--foreground, currentColor);
+	--tmt-color-text-muted:  var(--wp--preset--color--contrast-2, #595959);
+	--tmt-color-text-subtle: var(--wp--preset--color--contrast-3, #767676);
+	--tmt-color-border:      var(--wp--preset--color--contrast-3, currentColor);
+	--tmt-color-error:       var(--wp--preset--color--vivid-red, #b32d2e);
+
+	/* --- Typography --- */
+	--tmt-font-family:    inherit;
+	--tmt-font-size-base: 1em;
+	--tmt-font-size-sm:   0.9em;
+	--tmt-font-size-xs:   0.85em;
+	--tmt-font-size-lg:   1.1em;
+	--tmt-font-size-xl:   1.25em;
+	--tmt-line-height:    1.5;
+	--tmt-font-weight-heading: 600;
+
+	/* --- Spacing --- */
+	--tmt-space-xs:  0.3em;
+	--tmt-space-sm:  0.5em;
+	--tmt-space-md:  0.75em;
+	--tmt-space-lg:  1em;
+	--tmt-space-xl:  1.5em;
+
+	/* --- Focus indicator --- */
+	--tmt-focus-outline-color:  currentColor;
+	--tmt-focus-outline-width:  2px;
+	--tmt-focus-outline-offset: 2px;
+
+	font-family: var(--tmt-font-family);
+	line-height: var(--tmt-line-height);
+	color: var(--tmt-color-text);
+	margin: var(--tmt-space-xl) 0;
+}
+
+/* Headings */
+
+.tmt-container .tmt-heading {
+	margin: var(--tmt-space-lg) 0 var(--tmt-space-sm);
+	font-size: var(--tmt-font-size-xl);
+	font-weight: var(--tmt-font-weight-heading);
+}
+
+.tmt-container .tmt-year {
+	margin: var(--tmt-space-lg) 0 var(--tmt-space-xs);
+	font-size: var(--tmt-font-size-lg);
+	font-weight: var(--tmt-font-weight-heading);
+}
+
+/* Lists (upcoming, in-progress, past) */
+
+.tmt-container .tmt-list {
+	list-style: none;
+	padding: 0;
+	margin: 0 0 var(--tmt-space-lg) 0;
+}
+
+.tmt-container .tmt-item {
+	padding: var(--tmt-space-xs) 0;
+}
+
+.tmt-container .tmt-meta {
+	font-size: var(--tmt-font-size-xs);
+	color: var(--tmt-color-text-subtle);
+	margin-left: var(--tmt-space-xs);
+}
+
+/* Links: color is intentionally inherited from the theme. We only add a
+   hover underline (themes often omit it on body links) and a focus indicator. */
+
+.tmt-container .tmt-link {
+	text-decoration: underline;
+}
+
+.tmt-container .tmt-link:hover,
+.tmt-container .tmt-link:focus {
+	text-decoration: underline;
+}
+
+/* Status notices */
+
+.tmt-container .tmt-stale-notice {
+	font-size: var(--tmt-font-size-sm);
+	padding: var(--tmt-space-sm) var(--tmt-space-md);
+	border-left: 3px solid var(--tmt-color-border);
+	color: var(--tmt-color-text-muted);
+	margin: 0 0 var(--tmt-space-lg) 0;
+}
+
+.tmt-container .tmt-generated-at {
+	margin-top: var(--tmt-space-xl);
+	font-size: var(--tmt-font-size-xs);
+	color: var(--tmt-color-text-subtle);
+}
+
+.tmt-container.tmt-empty {
+	color: var(--tmt-color-text-muted);
+	font-style: italic;
+}
+
+.tmt-container .tmt-error {
+	font-size: var(--tmt-font-size-sm);
+	color: var(--tmt-color-error);
+}
+
+/* Focus indicator for keyboard navigation. Necessary because some themes
+   set `outline: none` on links. Uses currentColor so the indicator
+   automatically follows the link color set by the theme. */
+
+.tmt-container .tmt-link:focus-visible {
+	outline: var(--tmt-focus-outline-width) solid var(--tmt-focus-outline-color);
+	outline-offset: var(--tmt-focus-outline-offset);
+	border-radius: 2px;
+}

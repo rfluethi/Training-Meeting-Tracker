@@ -1,0 +1,47 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-05-23T08:00:00Z",
+  "source_repo": "rfluethi/learn-wp-dach-team",
+  "upcoming_sessions": [
+    {
+      "title": "Sitzung",
+      "session_date": "2026-06-05",
+      "session_time": "18:00",
+      "url": "https://github.com/rfluethi/learn-wp-dach-team/issues/123"
+    },
+    {
+      "title": "Workshop",
+      "session_date": "2026-07-12",
+      "session_time": "14:00",
+      "url": "https://github.com/rfluethi/learn-wp-dach-team/issues/130"
+    }
+  ],
+  "in_progress_sessions": [
+    {
+      "title": "Sitzung",
+      "session_date": "2026-05-10",
+      "session_time": "20:00",
+      "url": "https://github.com/rfluethi/learn-wp-dach-team/issues/121"
+    }
+  ],
+  "past_sessions": [
+    {
+      "title": "Sitzung",
+      "session_date": "2026-04-10",
+      "minutes_date": "2026-04-12",
+      "url": "https://github.com/rfluethi/learn-wp-dach-team/issues/120"
+    },
+    {
+      "title": "Sitzung",
+      "session_date": "2026-02-15",
+      "minutes_date": "2026-02-17",
+      "url": "https://github.com/rfluethi/learn-wp-dach-team/issues/115"
+    },
+    {
+      "title": "Workshop",
+      "session_date": "2025-12-01",
+      "minutes_date": "2025-12-03",
+      "url": "https://github.com/rfluethi/learn-wp-dach-team/issues/110"
+    }
+  ]
+}

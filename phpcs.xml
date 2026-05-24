@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<ruleset name="Training Meeting Tracker">
+	<description>WordPress Coding Standards for the Training Meeting Tracker plugin.</description>
+
+	<!-- Paths to check -->
+	<file>.</file>
+
+	<!-- Exclusions -->
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/languages/*</exclude-pattern>
+	<!-- tests/ and bin/ are not shipped (the release workflow excludes them)
+	     and intentionally stub WordPress functions, so it makes no sense
+	     to check them against the WordPress Coding Standards. -->
+	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/bin/*</exclude-pattern>
+
+	<!-- Arguments -->
+	<arg value="sp"/>
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+
+	<!-- WordPress Coding Standards -->
+	<rule ref="WordPress"/>
+
+	<!-- Plugin specific configuration -->
+	<config name="testVersion" value="7.4-"/>
+	<config name="minimum_supported_wp_version" value="6.4"/>
+
+	<!-- Text domain check -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="training-meeting-tracker"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Prefix check -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="tmt"/>
+				<element value="TMT"/>
+				<element value="training_meeting_tracker"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- PHP compatibility -->
+	<rule ref="PHPCompatibilityWP"/>
+</ruleset>

@@ -1,0 +1,143 @@
+# Translation file for the plugin "Training Meeting Tracker".
+# Copyright (C) Learn WP DACH Team
+# This file is distributed under the same license as the plugin.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Training Meeting Tracker 0.2.0\n"
+"Report-Msgid-Bugs-To: https://github.com/rfluethi/training-meeting-tracker/issues\n"
+"POT-Creation-Date: 2026-05-23 09:14+0000\n"
+"PO-Revision-Date: 2026-05-23 09:14+0000\n"
+"Last-Translator: Learn WP DACH Team\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: training-meeting-tracker\n"
+
+
+#. translators: %d: HTTP status code.
+#: includes/class-tmt-fetcher.php
+msgid "HTTP error %d while loading session data."
+msgstr ""
+
+#: includes/class-tmt-fetcher.php
+msgid "Session data could not be parsed as JSON."
+msgstr ""
+
+#: includes/class-tmt-fetcher.php
+msgid "Session data has an unknown schema version."
+msgstr ""
+
+#: includes/class-tmt-renderer.php
+msgid "Session data is being prepared."
+msgstr ""
+
+#: includes/class-tmt-renderer.php
+msgid "The source is currently unreachable: showing the last successful state."
+msgstr ""
+
+#: includes/class-tmt-renderer.php
+msgid "Upcoming meetings"
+msgstr ""
+
+#: includes/class-tmt-renderer.php
+msgid "Meetings in progress"
+msgstr ""
+
+#: includes/class-tmt-renderer.php
+msgid "Minutes"
+msgstr ""
+
+#. translators: %s: minutes date in DD.MM.YYYY format.
+#: includes/class-tmt-renderer.php
+msgid "Minutes from %s"
+msgstr ""
+
+#. translators: %s: timestamp of the last update.
+#: includes/class-tmt-renderer.php
+msgid "Updated: %s"
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Data source and cache"
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "JSON URL"
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Cache duration (hours)"
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "DACH Sessions List"
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "The session list is fed by a JSON file. Usually that is the file generated automatically on the data branch of the team repository."
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Full URL to sitzungen.json."
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "How long a successful fetch is cached before it is fetched again. Values: 1 to 168."
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Cache cleared. The next page view will reload the session data."
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Session data was refreshed successfully."
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Refresh failed. The source could not be loaded; the last successful state is kept."
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Cache"
+msgstr ""
+
+#. translators: %s: time of the last successful JSON generation.
+#: includes/class-tmt-settings.php
+msgid "Last successfully read data state: %s"
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "No data loaded yet."
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Refresh now"
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Clear cache now"
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "\"Refresh now\" immediately fetches the data from the source. \"Clear cache now\" only drops the cache; the next page view triggers a new fetch."
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Usage"
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Place the shortcode on a page or post:"
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "With optional attributes:"
+msgstr ""
+
+#: includes/class-tmt-settings.php
+msgid "Permission denied."
+msgstr ""

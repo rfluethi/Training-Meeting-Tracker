@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag name (for example v0.1.0)'
+        required: true
+
+jobs:
+  build:
+    name: Build plugin ZIP
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Determine plugin version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if [ -z "$TAG" ] || [ "$TAG" = "$GITHUB_REF" ]; then
+            TAG="${{ github.event.inputs.tag }}"
+          fi
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Create ZIP artefact
+        run: |
+          PLUGIN_SLUG="training-meeting-tracker"
+          BUILD_DIR="/tmp/build/${PLUGIN_SLUG}"
+          mkdir -p "${BUILD_DIR}"
+
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='vendor' \
+            --exclude='node_modules' \
+            --exclude='tests' \
+            --exclude='docs' \
+            --exclude='dist' \
+            --exclude='bin' \
+            --exclude='*.zip' \
+            --exclude='.gitignore' \
+            --exclude='.editorconfig' \
+            --exclude='.distignore' \
+            --exclude='phpcs.xml' \
+            --exclude='composer.json' \
+            --exclude='composer.lock' \
+            --exclude='CHANGELOG.md' \
+            --exclude='README.md' \
+            ./ "${BUILD_DIR}/"
+
+          cd /tmp/build
+          zip -r "${GITHUB_WORKSPACE}/${PLUGIN_SLUG}-${{ steps.version.outputs.version }}.zip" "${PLUGIN_SLUG}"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          files: training-meeting-tracker-${{ steps.version.outputs.version }}.zip
+          generate_release_notes: true

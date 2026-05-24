@@ -1,0 +1,22 @@
+/vendor/
+/node_modules/
+composer.lock
+package-lock.json
+.phpunit.result.cache
+.phpcs.cache
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build-Artefakte
+/build/
+/dist/
+*.zip

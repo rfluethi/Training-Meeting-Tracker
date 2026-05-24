@@ -1,0 +1,43 @@
+name: Plugin Check
+
+on:
+  # Plugin Check is slow (Docker plus WordPress boot). We run it only where
+  # compliance really matters: on pull requests against main, before each
+  # release (v* tag), and manually. Pushes directly to main only get the
+  # fast lint job.
+  pull_request:
+    branches: [ main ]
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+concurrency:
+  group: plugin-check-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  plugin-check:
+    name: WordPress Plugin Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Run Plugin Check
+        uses: WordPress/plugin-check-action@v1
+        with:
+          build-dir: './'
+          # We leave out the wp.org distribution category (plugin_repo) because
+          # this plugin is intentionally distributed via GitHub releases and
+          # not through the wp.org plugin directory. All technical code
+          # quality checks stay active.
+          categories: 'general,security,performance,accessibility,internationalization'
+          exclude-directories: 'vendor,node_modules,.github,docs,tests,bin'
+          exclude-files: '.gitignore,.editorconfig,phpcs.xml,composer.json'
