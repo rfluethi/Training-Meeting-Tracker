@@ -112,7 +112,7 @@ Four documents, each for a different audience:
 
 ## History
 
-This plugin is the successor of `learn-wp-dach-sitzungen` (display name "Learn DACH Sitzungen"). The previous repository is archived and continues to exist read-only at https://github.com/rfluethi/learn-wp-dach-sitzungen.
+This plugin is the successor of an earlier internal plugin ("Learn DACH Sitzungen"). That plugin has been retired and its repository removed.
 
 ## License
 

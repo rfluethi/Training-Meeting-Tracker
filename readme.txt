@@ -29,7 +29,7 @@ Features:
 
 Source code and contributions: https://github.com/rfluethi/Training-Meeting-Tracker
 
-This plugin is the successor of "Learn DACH Sitzungen" (repository `learn-wp-dach-sitzungen`). The predecessor is archived; all further development happens here.
+This plugin is the successor of an earlier internal plugin ("Learn DACH Sitzungen", since retired). All further development happens here.
 
 == Installation ==
 
@@ -78,7 +78,7 @@ By default 12 hours. Configurable in the plugin settings between 1 and 168 hours
 * CI: Plugin Check workflow now stages the plugin under its correct lowercase slug `training-meeting-tracker/` so the text domain check passes regardless of the GitHub repository name.
 
 = 0.1.0 =
-* Initial release as Training Meeting Tracker, successor of the archived plugin Learn DACH Sitzungen (repository learn-wp-dach-sitzungen).
+* Initial release as Training Meeting Tracker, successor of the retired plugin "Learn DACH Sitzungen".
 * Functionally equivalent to the predecessor at version 0.3.3.
 * All identifiers renamed: plugin slug, text domain, class prefix, CSS prefix, shortcode, settings page slug, options keys.
 * All German source code comments translated to English.

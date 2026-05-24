@@ -50,7 +50,7 @@ Users upgrading from 0.1.0 are very unlikely to be affected because 0.1.0 was th
 
 ### Background
 
-This is the first release under the new name. The plugin is the functional successor of `learn-wp-dach-sitzungen` ("Learn DACH Sitzungen") at version 0.3.3. Identifiers were renamed (plugin slug, text domain, class prefix `TMT_`, CSS prefix `tmt-`, shortcode, settings page slug, options keys). German source code comments were translated to English. The data source URL (`learn-wp-dach-team`, branch `data`) and the underlying behaviour stay the same.
+This is the first release under the new name. The plugin is the functional successor of an earlier internal plugin ("Learn DACH Sitzungen", since retired) at version 0.3.3. Identifiers were renamed (plugin slug, text domain, class prefix `TMT_`, CSS prefix `tmt-`, shortcode, settings page slug, options keys). German source code comments were translated to English. The data source URL (`learn-wp-dach-team`, branch `data`) and the underlying behaviour stay the same.
 
 Users of the predecessor plugin need to deactivate and remove it before installing this one. The shortcode changes from `[learn_wp_dach_sitzungen]` to `[training_meeting_tracker]` and has to be replaced on every page that uses it. Settings need to be re-entered because the options key prefix changed.
 
