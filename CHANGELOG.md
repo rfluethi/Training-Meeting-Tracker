@@ -6,6 +6,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-13
+
+### Added
+
+- Shortcode attribute `heading_level` (2 to 5). The block headings use that level, the year headings sit one level below. Default is 2, as before.
+- Settings page: status section with the time of the last successful fetch, the time the source generated the data, and the reason of the last failed fetch. All times use the date and time format of the site.
+- Settings page: a failed "Refresh now" shows the reason. An invalid JSON URL is reported and the previous URL is kept.
+- "Settings" link in the plugin row on the Plugins screen.
+- The Upcoming meetings block says "No date set yet." when no meeting is scheduled, instead of disappearing.
+- Notice "There are currently no meetings to show." when the data is valid but no visible section has an entry.
+- German translations for `de_DE_formal`, `de_CH`, `de_CH_informal` and `de_AT`. Before, these locales showed the English texts.
+- The link to a meeting carries the date in its accessible name, so links with the same title stay distinguishable for screen reader users.
+- Plugin header `Update URI`, so WordPress never offers an update from a plugin with the same slug on wordpress.org.
+- `readme.txt` and `README.md` describe the external request to GitHub.
+- Tests for the cache and fallback logic, the shortcode attributes, the settings and the translation files. A new CI workflow runs the tests on PHP 7.4 to 8.5.
+- `bin/check-version.sh`, `SECURITY.md`, `CONTRIBUTING.md`, `.gitattributes`, Dependabot configuration for the GitHub Actions.
+
+### Changed
+
+- Requires WordPress 6.7 or newer (was 6.4). Older versions do not load the bundled German translation on their own.
+- Tested up to WordPress 7.1. "Tested up to" is kept in `readme.txt` only, the plugin header no longer carries it.
+- The notice that the source is unreachable and stale data is shown is visible to logged-in administrators only. Visitors see the last good data without the notice.
+- Minutes entries show only the meeting date. The prefix "Meeting from" (German: "Sitzung vom") repeated the title.
+- Default JSON URL and Author URI point to the team repository in the `learn-wp-dach` organisation (was `rfluethi/learn-wp-dach-team`, which only works through the GitHub redirect).
+- After a failed fetch the source is not contacted again for ten minutes. Before, every page view triggered a new request while the source was down.
+- The JSON is fetched with `wp_safe_remote_get()` and only `http` and `https` URLs are accepted, in the settings and for the meeting links. The request timeout is 5 seconds, the WordPress default (was 15).
+- The cache is cleared when the saved settings change, not on every save.
+- Frontend colors are derived from the text color of the surrounding block instead of theme presets with a fixed fallback. The muted text keeps its contrast on dark backgrounds and in themes whose presets are light.
+- A second shortcode on the same page gets its own heading IDs.
+- A meeting without a title is shown as "Meeting" instead of an empty link.
+- English interface strings use "meeting" throughout (was a mix of "session" and "meeting"). The German translation is updated.
+- Settings page: both cache buttons are secondary buttons in one form, the usage example shows the current attributes.
+- Meeting dates and times have to exist: `2026-02-30` or `25:00` are rejected.
+- `uninstall.php` cleans every site of a multisite network, not only the first 100.
+- The release workflow runs lint, tests and Plugin Check before it publishes, checks that the tag matches the version numbers, and takes the release notes from this file. `bin/build-zip.sh` is the single place that decides which files ship, and it works from an allow list.
+- Plugin Check runs against the unpacked ZIP, not against the repository. The category `internationalization` is dropped from the workflow: Plugin Check 2.x has no such category, its i18n checks run under `general`.
+- GitHub Actions are updated and pinned to commits.
+- `LICENSE` contains the full text of the GPL version 2.
+
+### Fixed
+
+- The test for past meetings still expected the closing date of the issue and failed since 0.1.2.
+- `bin/build-zip.sh` and the release workflow used different file lists.
+- User guide: the date next to a minutes entry is the meeting date, not the day the issue was closed.
+
+### Removed
+
+- Support for the JSON schema version 1. The source writes version 2 since May 2026, a version 1 file now counts as a failed fetch.
+- Unused CSS rule `.tmtracker-generated-at` and the unused custom property `--tmtracker-font-size-base`.
+- `readme.txt`: section "Screenshots", there are no screenshot files.
+
 ## [0.1.2] - 2026-05-24
 
 ### Changed
@@ -54,7 +105,8 @@ This is the first release under the new name. The plugin is the functional succe
 
 Users of the predecessor plugin need to deactivate and remove it before installing this one. The shortcode changes from `[learn_wp_dach_sitzungen]` to `[training_meeting_tracker]` and has to be replaced on every page that uses it. Settings need to be re-entered because the options key prefix changed.
 
-[Unreleased]: https://github.com/rfluethi/Training-Meeting-Tracker/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/rfluethi/Training-Meeting-Tracker/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/rfluethi/Training-Meeting-Tracker/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/rfluethi/Training-Meeting-Tracker/releases/tag/v0.1.2
 [0.1.1]: https://github.com/rfluethi/Training-Meeting-Tracker/releases/tag/v0.1.1
 [0.1.0]: https://github.com/rfluethi/Training-Meeting-Tracker/releases/tag/v0.1.0

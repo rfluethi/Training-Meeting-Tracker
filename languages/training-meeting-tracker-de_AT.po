@@ -1,0 +1,174 @@
+# Translation file for the plugin "Training Meeting Tracker".
+# Copyright (C) Learn WP DACH Team
+# This file is distributed under the same license as the plugin.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Training Meeting Tracker\n"
+"Report-Msgid-Bugs-To: https://github.com/rfluethi/Training-Meeting-Tracker/issues\n"
+"POT-Creation-Date: 2026-11-12 10:00+0000\n"
+"PO-Revision-Date: 2026-11-12 10:00+0000\n"
+"Last-Translator: Learn WP DACH Team\n"
+"Language-Team: de_AT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de_AT\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: training-meeting-tracker\n"
+
+
+#. translators: %d: HTTP status code.
+#: includes/class-tmtracker-fetcher.php
+msgid "HTTP error %d while loading meeting data."
+msgstr "HTTP-Fehler %d beim Laden der Sitzungsdaten."
+
+#: includes/class-tmtracker-fetcher.php
+msgid "Meeting data could not be parsed as JSON."
+msgstr "Sitzungsdaten konnten nicht als JSON gelesen werden."
+
+#: includes/class-tmtracker-fetcher.php
+msgid "Meeting data has an unknown schema version."
+msgstr "Sitzungsdaten haben eine unbekannte Schema-Version."
+
+#: includes/class-tmtracker-renderer.php
+msgid "Upcoming meetings"
+msgstr "Anstehende Sitzungen"
+
+#: includes/class-tmtracker-renderer.php
+msgid "Meetings in progress"
+msgstr "Sitzungen in Bearbeitung"
+
+#: includes/class-tmtracker-renderer.php
+msgid "No date set yet."
+msgstr "Noch kein Termin festgelegt."
+
+#: includes/class-tmtracker-renderer.php
+msgid "There are currently no meetings to show."
+msgstr "Zurzeit sind keine Sitzungen eingetragen."
+
+#: includes/class-tmtracker-renderer.php
+msgid "Meeting data is being prepared."
+msgstr "Sitzungsdaten werden vorbereitet."
+
+#: includes/class-tmtracker-renderer.php
+msgid "The source is currently unreachable: showing the last successful state."
+msgstr "Aktuell kann die Quelle nicht erreicht werden: angezeigt wird der letzte erfolgreiche Stand."
+
+#: includes/class-tmtracker-renderer.php
+msgid "Minutes"
+msgstr "Protokolle"
+
+#: includes/class-tmtracker-renderer.php
+msgid "Meeting"
+msgstr "Sitzung"
+
+#: includes/class-tmtracker-settings.php
+msgid "Data source and cache"
+msgstr "Datenquelle und Cache"
+
+#: includes/class-tmtracker-settings.php
+msgid "JSON URL"
+msgstr "JSON-URL"
+
+#: includes/class-tmtracker-settings.php
+msgid "Cache duration (hours)"
+msgstr "Cache-Dauer (Stunden)"
+
+#: includes/class-tmtracker-settings.php
+msgid "Training Meeting Tracker"
+msgstr "Training Meeting Tracker"
+
+#: includes/class-tmtracker-settings.php
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: includes/class-tmtracker-settings.php
+msgid "The meeting list is fed by a JSON file. Usually that is the file generated automatically on the data branch of the team repository."
+msgstr "Die Liste der Sitzungen wird aus einer JSON-Datei gespeist. Üblicherweise ist das die Datei, die im data-Branch des Team-Repos automatisch erzeugt wird."
+
+#: includes/class-tmtracker-settings.php
+msgid "Full URL to sitzungen.json, starting with http or https. Leave the field empty to use the default source."
+msgstr "Vollständige URL zur sitzungen.json, beginnend mit http oder https. Feld leer lassen, um die Standardquelle zu verwenden."
+
+#. translators: 1: lowest allowed number of hours, 2: highest allowed number of hours.
+#: includes/class-tmtracker-settings.php
+msgid "How long a successful fetch is cached before it is fetched again. Values: %1$d to %2$d."
+msgstr "Wie lange ein erfolgreicher Abruf gecached wird, bevor er neu geholt wird. Werte: %1$d bis %2$d."
+
+#: includes/class-tmtracker-settings.php
+msgid "Status"
+msgstr "Status"
+
+#: includes/class-tmtracker-settings.php
+msgid "Refresh now"
+msgstr "Jetzt aktualisieren"
+
+#: includes/class-tmtracker-settings.php
+msgid "Clear cache now"
+msgstr "Cache jetzt leeren"
+
+#: includes/class-tmtracker-settings.php
+msgid "\"Refresh now\" immediately fetches the data from the source. \"Clear cache now\" only drops the cache; the next page view triggers a new fetch."
+msgstr "„Jetzt aktualisieren“ lädt die Daten sofort von der Quelle. „Cache jetzt leeren“ verwirft nur den Cache; der nächste Seitenaufruf löst dann einen neuen Abruf aus."
+
+#: includes/class-tmtracker-settings.php
+msgid "Usage"
+msgstr "Verwendung"
+
+#: includes/class-tmtracker-settings.php
+msgid "Place the shortcode on a page or post:"
+msgstr "Shortcode in einer Seite oder einem Beitrag einsetzen:"
+
+#: includes/class-tmtracker-settings.php
+msgid "With optional attributes:"
+msgstr "Mit optionalen Attributen:"
+
+#: includes/class-tmtracker-settings.php
+msgid "Permission denied."
+msgstr "Keine Berechtigung."
+
+#: includes/class-tmtracker-settings.php
+msgid "Cache cleared. The next page view will reload the meeting data."
+msgstr "Cache wurde geleert. Der nächste Aufruf der Seite lädt die Sitzungsdaten neu."
+
+#: includes/class-tmtracker-settings.php
+msgid "Meeting data was refreshed successfully."
+msgstr "Sitzungsdaten wurden erfolgreich aktualisiert."
+
+#: includes/class-tmtracker-settings.php
+msgid "Refresh failed. The source could not be loaded; the last successful state is kept."
+msgstr "Aktualisierung fehlgeschlagen. Die Quelle konnte nicht geladen werden; der letzte erfolgreiche Stand bleibt erhalten."
+
+#. translators: %s: error message of the failed fetch.
+#: includes/class-tmtracker-settings.php
+msgid "Reason: %s"
+msgstr "Grund: %s"
+
+#: includes/class-tmtracker-settings.php
+msgid "No data loaded yet."
+msgstr "Noch keine Daten gelesen."
+
+#: includes/class-tmtracker-settings.php
+msgid "Not recorded yet. The time appears after the next fetch."
+msgstr "Noch nicht erfasst. Der Zeitpunkt erscheint nach dem nächsten Abruf."
+
+#: includes/class-tmtracker-settings.php
+msgid "Last successful fetch"
+msgstr "Letzter erfolgreicher Abruf"
+
+#: includes/class-tmtracker-settings.php
+msgid "Data generated by the source"
+msgstr "Daten von der Quelle erzeugt"
+
+#: includes/class-tmtracker-settings.php
+msgid "The source only writes a new file when a meeting changed. An old date here is normal."
+msgstr "Die Quelle schreibt nur dann eine neue Datei, wenn sich eine Sitzung geändert hat. Ein älteres Datum ist hier normal."
+
+#: includes/class-tmtracker-settings.php
+msgid "Last fetch failed"
+msgstr "Letzter Abruf fehlgeschlagen"
+
+#: includes/class-tmtracker-settings.php
+msgid "The JSON URL is not a valid http or https address. The previous URL was kept."
+msgstr "Die JSON-URL ist keine gültige http- oder https-Adresse. Die bisherige URL bleibt bestehen."

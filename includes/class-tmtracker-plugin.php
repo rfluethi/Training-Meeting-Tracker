@@ -73,7 +73,7 @@ final class TMTracker_Plugin {
 		$this->fetcher   = new TMTracker_Fetcher();
 		$this->renderer  = new TMTracker_Renderer();
 		$this->shortcode = new TMTracker_Shortcode( $this->fetcher, $this->renderer );
-		$this->settings  = new TMTracker_Settings();
+		$this->settings  = new TMTracker_Settings( $this->fetcher );
 
 		$this->shortcode->register();
 		$this->settings->register();
@@ -84,7 +84,8 @@ final class TMTracker_Plugin {
 	/**
 	 * Register frontend assets.
 	 *
-	 * Loaded only when the shortcode is used on the current page.
+	 * The stylesheet is only registered here. The shortcode enqueues it when
+	 * it is used on the current page.
 	 *
 	 * @return void
 	 */

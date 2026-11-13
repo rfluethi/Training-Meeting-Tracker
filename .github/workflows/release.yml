@@ -7,72 +7,85 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag name (for example v0.1.0)'
+        description: 'Existing tag to release again (for example v0.2.0). The tag has to contain bin/check-version.sh, so tags up to v0.1.2 do not work.'
         required: true
 
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
 jobs:
-  build:
-    name: Build plugin ZIP
+  # A release is only published when the tagged code passes the same checks
+  # as a pull request.
+  lint:
+    uses: ./.github/workflows/lint.yml
+    with:
+      ref: ${{ inputs.tag || github.ref }}
+
+  tests:
+    uses: ./.github/workflows/tests.yml
+    with:
+      ref: ${{ inputs.tag || github.ref }}
+
+  plugin-check:
+    uses: ./.github/workflows/plugin-check.yml
+    with:
+      ref: ${{ inputs.tag || github.ref }}
+
+  release:
+    name: Build ZIP and publish release
+    needs: [ lint, tests, plugin-check ]
     runs-on: ubuntu-latest
 
     permissions:
       contents: write
 
+    env:
+      # Passed through the environment, never interpolated into a script.
+      TAG: ${{ inputs.tag || github.ref_name }}
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.inputs.tag || github.ref }}
+          ref: ${{ inputs.tag || github.ref }}
           persist-credentials: false
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          tools: composer:v2
+      - name: Check that the tag matches the version numbers
+        run: bash bin/check-version.sh "${TAG}"
 
-      - name: Determine plugin version from tag
-        id: version
+      - name: Build plugin ZIP
+        run: bash bin/build-zip.sh "${TAG#v}"
+
+      - name: Extract release notes from CHANGELOG.md
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
-          if [ -z "$TAG" ] || [ "$TAG" = "$GITHUB_REF" ]; then
-            TAG="${{ github.event.inputs.tag }}"
+          awk -v heading="## [${TAG#v}]" '
+            index($0, heading) == 1 { found = 1; next }
+            found && index($0, "## [") == 1 { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "ERROR: CHANGELOG.md has no notes for ${TAG#v}" >&2
+            exit 1
           fi
-          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
-
-      - name: Create ZIP artefact
-        run: |
-          PLUGIN_SLUG="training-meeting-tracker"
-          BUILD_DIR="/tmp/build/${PLUGIN_SLUG}"
-          mkdir -p "${BUILD_DIR}"
-
-          rsync -a \
-            --exclude='.git' \
-            --exclude='.github' \
-            --exclude='vendor' \
-            --exclude='node_modules' \
-            --exclude='tests' \
-            --exclude='docs' \
-            --exclude='dist' \
-            --exclude='bin' \
-            --exclude='*.zip' \
-            --exclude='.gitignore' \
-            --exclude='.editorconfig' \
-            --exclude='.distignore' \
-            --exclude='phpcs.xml' \
-            --exclude='composer.json' \
-            --exclude='composer.lock' \
-            --exclude='CHANGELOG.md' \
-            --exclude='README.md' \
-            ./ "${BUILD_DIR}/"
-
-          cd /tmp/build
-          zip -r "${GITHUB_WORKSPACE}/${PLUGIN_SLUG}-${{ steps.version.outputs.version }}.zip" "${PLUGIN_SLUG}"
 
       - name: Publish release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          files: training-meeting-tracker-${{ steps.version.outputs.version }}.zip
-          generate_release_notes: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          ASSET="dist/training-meeting-tracker-${TAG#v}.zip"
+
+          if gh release view "${TAG}" > /dev/null 2>&1; then
+            gh release upload "${TAG}" "${ASSET}" --clobber
+            gh release edit "${TAG}" --notes-file release-notes.md
+          else
+            gh release create "${TAG}" "${ASSET}" \
+              --verify-tag \
+              --title "${TAG}" \
+              --notes-file release-notes.md
+          fi

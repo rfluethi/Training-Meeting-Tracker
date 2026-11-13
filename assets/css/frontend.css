@@ -5,30 +5,29 @@
  * No external dependencies.
  *
  * Theming: every visual choice is a custom property declared once at the top
- * of `.tmtracker-container`. Active themes can override these by:
- *   1. Setting `--tmtracker-…` directly in theme styles, or
- *   2. Adjusting the WordPress preset variables (`--wp--preset--color--*`,
- *      `--wp--preset--font-size--*`) used as fallbacks.
+ * of `.tmtracker-container`. Themes can override any `--tmtracker-*` property
+ * in their own styles.
+ *
+ * Colors: the plugin sets no color of its own. Text inherits the color of
+ * the surrounding block, links keep the link color of the theme. The muted
+ * tones are mixed from that inherited color, so their contrast follows the
+ * theme on light and on dark backgrounds. Browsers without `color-mix()`
+ * show the muted text in the plain text color.
  *
  * The plugin never sets a fixed width: the container flows with the
  * surrounding layout.
- *
- * Link colors are deliberately NOT overridden by this stylesheet. Every
- * `<a>` inherits the theme's link color. The plugin only adds a focus
- * indicator (which themes often forget) and a hover underline.
  */
 
 .tmtracker-container {
-	/* --- Colors (theme.json aware) --- */
-	--tmtracker-color-text:        var(--wp--preset--color--foreground, currentColor);
-	--tmtracker-color-text-muted:  var(--wp--preset--color--contrast-2, #595959);
-	--tmtracker-color-text-subtle: var(--wp--preset--color--contrast-3, #767676);
-	--tmtracker-color-border:      var(--wp--preset--color--contrast-3, currentColor);
-	--tmtracker-color-error:       var(--wp--preset--color--vivid-red, #b32d2e);
+	/* Colors */
+	--tmtracker-color-text:        currentColor;
+	--tmtracker-color-text-muted:  color-mix(in srgb, currentColor 85%, transparent);
+	--tmtracker-color-text-subtle: color-mix(in srgb, currentColor 80%, transparent);
+	--tmtracker-color-border:      currentColor;
+	--tmtracker-color-error:       #b32d2e;
 
-	/* --- Typography --- */
+	/* Typography */
 	--tmtracker-font-family:    inherit;
-	--tmtracker-font-size-base: 1em;
 	--tmtracker-font-size-sm:   0.9em;
 	--tmtracker-font-size-xs:   0.85em;
 	--tmtracker-font-size-lg:   1.1em;
@@ -36,14 +35,14 @@
 	--tmtracker-line-height:    1.5;
 	--tmtracker-font-weight-heading: 600;
 
-	/* --- Spacing --- */
+	/* Spacing */
 	--tmtracker-space-xs:  0.3em;
 	--tmtracker-space-sm:  0.5em;
 	--tmtracker-space-md:  0.75em;
 	--tmtracker-space-lg:  1em;
 	--tmtracker-space-xl:  1.5em;
 
-	/* --- Focus indicator --- */
+	/* Focus indicator */
 	--tmtracker-focus-outline-color:  currentColor;
 	--tmtracker-focus-outline-width:  2px;
 	--tmtracker-focus-outline-offset: 2px;
@@ -51,7 +50,7 @@
 	font-family: var(--tmtracker-font-family);
 	line-height: var(--tmtracker-line-height);
 	color: var(--tmtracker-color-text);
-	margin: var(--tmtracker-space-xl) 0;
+	margin-block: var(--tmtracker-space-xl);
 }
 
 /* Headings */
@@ -83,45 +82,14 @@
 .tmtracker-container .tmtracker-meta {
 	font-size: var(--tmtracker-font-size-xs);
 	color: var(--tmtracker-color-text-subtle);
-	margin-left: var(--tmtracker-space-xs);
+	margin-inline-start: var(--tmtracker-space-xs);
 }
 
-/* Links: color is intentionally inherited from the theme. We only add a
-   hover underline (themes often omit it on body links) and a focus indicator. */
+/* Links: the color is inherited from the theme. The underline is always on,
+   so a link is recognisable without relying on color alone. */
 
 .tmtracker-container .tmtracker-link {
 	text-decoration: underline;
-}
-
-.tmtracker-container .tmtracker-link:hover,
-.tmtracker-container .tmtracker-link:focus {
-	text-decoration: underline;
-}
-
-/* Status notices */
-
-.tmtracker-container .tmtracker-stale-notice {
-	font-size: var(--tmtracker-font-size-sm);
-	padding: var(--tmtracker-space-sm) var(--tmtracker-space-md);
-	border-left: 3px solid var(--tmtracker-color-border);
-	color: var(--tmtracker-color-text-muted);
-	margin: 0 0 var(--tmtracker-space-lg) 0;
-}
-
-.tmtracker-container .tmtracker-generated-at {
-	margin-top: var(--tmtracker-space-xl);
-	font-size: var(--tmtracker-font-size-xs);
-	color: var(--tmtracker-color-text-subtle);
-}
-
-.tmtracker-container.tmtracker-empty {
-	color: var(--tmtracker-color-text-muted);
-	font-style: italic;
-}
-
-.tmtracker-container .tmtracker-error {
-	font-size: var(--tmtracker-font-size-sm);
-	color: var(--tmtracker-color-error);
 }
 
 /* Focus indicator for keyboard navigation. Necessary because some themes
@@ -132,4 +100,27 @@
 	outline: var(--tmtracker-focus-outline-width) solid var(--tmtracker-focus-outline-color);
 	outline-offset: var(--tmtracker-focus-outline-offset);
 	border-radius: 2px;
+}
+
+/* Status notices */
+
+.tmtracker-container .tmtracker-stale-notice {
+	font-size: var(--tmtracker-font-size-sm);
+	padding: var(--tmtracker-space-sm) var(--tmtracker-space-md);
+	border-inline-start: 3px solid var(--tmtracker-color-border);
+	color: var(--tmtracker-color-text-muted);
+	margin: 0 0 var(--tmtracker-space-lg) 0;
+}
+
+.tmtracker-container.tmtracker-empty,
+.tmtracker-container .tmtracker-no-meetings,
+.tmtracker-container .tmtracker-no-date {
+	color: var(--tmtracker-color-text-muted);
+	font-style: italic;
+}
+
+.tmtracker-container .tmtracker-error {
+	font-size: var(--tmtracker-font-size-sm);
+	color: var(--tmtracker-color-error);
+	font-style: normal;
 }

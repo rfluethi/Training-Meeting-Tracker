@@ -13,7 +13,7 @@ The system has three clearly separated building blocks.
 ```text
 +---------------------------------------------------------------+
 | 1. GitHub issues (source)                                     |
-|    Repository: rfluethi/learn-wp-dach-team                    |
+|    Repository: learn-wp-dach/learn-wp-dach-team               |
 |    Label: "sitzung"                                           |
 |    Maintained by the team member who leads the meeting        |
 +---------------------------------------------------------------+
@@ -63,9 +63,9 @@ Each block is understandable in isolation and replaceable. If the action fails, 
 **Inside the plugin.**
 
 1. When the shortcode is invoked, `TMTracker_Fetcher` first checks the transient cache (default 12 hours).
-2. Cache empty, `wp_remote_get` is called against the JSON URL (`https://raw.githubusercontent.com/.../data/sitzungen.json`).
+2. Cache empty, `wp_safe_remote_get` is called against the JSON URL (`https://raw.githubusercontent.com/.../data/sitzungen.json`).
 3. Success: the JSON is validated against the schema, cached in the transient, and additionally stored in `tmtracker_last_good_data` as a persistent fallback.
-4. Error: the last good fallback is rendered with a subtle notice.
+4. Error: the last good fallback is rendered. Logged-in administrators also see a subtle notice, visitors do not. The plugin then waits ten minutes before it contacts the source again, so a source that is down does not slow down every page view.
 5. `TMTracker_Renderer` builds the HTML, `TMTracker_Shortcode` enqueues the stylesheet and outputs the result.
 
 ## 4. Data model
@@ -76,7 +76,7 @@ Schema version v2 (introduced with the predecessor plugin at version 0.3.0). The
 {
   "schema_version": 2,
   "generated_at": "2026-05-23T08:00:00Z",
-  "source_repo": "rfluethi/learn-wp-dach-team",
+  "source_repo": "learn-wp-dach/learn-wp-dach-team",
   "upcoming_sessions": [
     {
       "title": "Sitzung",
@@ -111,15 +111,15 @@ Notes:
 - `title` comes from the body field `**Veranstaltung:**`, not from the issue title. This way the frontend shows a clean display name without the date.
 - `upcoming_sessions` is sorted ascending, `in_progress_sessions` and `past_sessions` descending by `session_date`.
 - `minutes_date` may be empty (label `Erledigt` is set but the issue is not closed, so no `closedAt`).
-- `schema_version`: the plugin accepts only the version hardcoded in `TMTracker_Fetcher::SUPPORTED_SCHEMA_VERSION`. Bump the major version on breaking changes.
+- `schema_version`: the plugin accepts only the version hardcoded in `TMTracker_Fetcher::SUPPORTED_SCHEMA_VERSION`. The older version 1 is rejected since 0.2.0. Bump the major version on breaking changes.
 
 ## 5. Where does what live?
 
 | Responsibility | Repository | Path |
 |---|---|---|
-| Meeting issues and their maintenance | `rfluethi/learn-wp-dach-team` | Issues with label `sitzung` |
-| Action (workflow plus script) | `rfluethi/learn-wp-dach-team` | `.github/workflows/sitzungen-json.yml` and `.github/scripts/build-sitzungen-json.py` |
-| Generated JSON | `rfluethi/learn-wp-dach-team` | Branch `data`, file `sitzungen.json` |
+| Meeting issues and their maintenance | `learn-wp-dach/learn-wp-dach-team` | Issues with label `sitzung` |
+| Action (workflow plus script) | `learn-wp-dach/learn-wp-dach-team` | `.github/workflows/sitzungen-json.yml` and `.github/scripts/build-sitzungen-json.py` |
+| Generated JSON | `learn-wp-dach/learn-wp-dach-team` | Branch `data`, file `sitzungen.json` |
 | Plugin code | `rfluethi/Training-Meeting-Tracker` | See `Developer.md` |
 | WordPress install | DACH website | `wp-content/plugins/training-meeting-tracker/` |
 
@@ -135,7 +135,7 @@ So that each meeting event does not produce a bot commit on `main`. The history 
 
 **Why a standalone plugin and not JCI?**
 
-This single use case is small and specific enough that a third party plugin like JCI would be overkill. Fifty lines of clear PHP are easier to maintain than a generic template renderer with hundreds of options.
+This single use case is small and specific enough that a third party plugin like JCI would be overkill. A few hundred lines of clear PHP are easier to maintain than a generic template renderer with hundreds of options.
 
 **Why does the label, not the date, decide what counts as "minutes"?**
 

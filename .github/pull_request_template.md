@@ -22,12 +22,13 @@ Closes #
 ## Checklist
 
 - [ ] Code follows the WordPress Coding Standards (`composer lint` passes)
+- [ ] Tests pass (`php tests/run-tests.php`), new behaviour is covered by a test
 - [ ] Plugin Check Action passes (verified automatically)
 - [ ] `CHANGELOG.md` updated under `[Unreleased]`
 - [ ] On breaking changes: schema version bumped (plugin and build script)
-- [ ] On string changes: `.pot` file updated, `.po` translations updated if needed
-- [ ] On version bump: version in plugin header, `TMTRACKER_VERSION`, `readme.txt` bumped in sync
-- [ ] Documentation updated when behaviour changes
+- [ ] On string changes: `.pot` and `.po` files updated, `.mo` file recompiled
+- [ ] On version bump: version in plugin header, `TMTRACKER_VERSION`, `readme.txt` bumped in sync (`bin/check-version.sh` passes)
+- [ ] Documentation updated when behaviour changes (`README.md`, `readme.txt`, `docs/`)
 
 ## Test instructions
 

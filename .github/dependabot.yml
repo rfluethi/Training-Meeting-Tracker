@@ -1,0 +1,11 @@
+version: 2
+
+updates:
+  # The workflows pin every action to a commit. Dependabot proposes the
+  # update of the commit and of the version comment behind it.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "CI"
