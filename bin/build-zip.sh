@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 #
-# Build a distributable plugin ZIP locally.
+# Build the distributable plugin ZIP.
 #
-# Uses the exact include/exclude rules from .github/workflows/release.yml so
-# the local build is byte-for-byte identical to what CI produces.
+# This script is the only place that decides which files ship. The release
+# and Plugin Check workflows call it, so a local build contains the same
+# files as the ZIP attached to a GitHub release.
+#
+# The ZIP is built from an allow list: a new file in the repository does not
+# ship unless it is added to SHIPPED below.
 #
 # Usage:
 #   bin/build-zip.sh                 # version read from plugin header
@@ -16,6 +20,17 @@ set -euo pipefail
 
 PLUGIN_SLUG="training-meeting-tracker"
 PLUGIN_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+# Files and directories that make up the installed plugin.
+SHIPPED=(
+    "${PLUGIN_SLUG}.php"
+    "uninstall.php"
+    "readme.txt"
+    "LICENSE"
+    "includes"
+    "assets"
+    "languages"
+)
 
 # Determine version
 if [ -n "${1:-}" ]; then
@@ -32,34 +47,27 @@ if [ -z "${VERSION}" ]; then
 fi
 
 BUILD_ROOT="$(mktemp -d)"
+trap 'rm -rf "${BUILD_ROOT}"' EXIT
+
 BUILD_DIR="${BUILD_ROOT}/${PLUGIN_SLUG}"
 DIST_DIR="${PLUGIN_DIR}/dist"
 OUTPUT="${DIST_DIR}/${PLUGIN_SLUG}-${VERSION}.zip"
 
 mkdir -p "${BUILD_DIR}" "${DIST_DIR}"
 
-# Mirror the file list of .github/workflows/release.yml exactly.
-rsync -a \
-    --exclude='.git' \
-    --exclude='.github' \
-    --exclude='vendor' \
-    --exclude='node_modules' \
-    --exclude='tests' \
-    --exclude='docs' \
-    --exclude='dist' \
-    --exclude='bin' \
-    --exclude='*.zip' \
-    --exclude='.gitignore' \
-    --exclude='.editorconfig' \
-    --exclude='phpcs.xml' \
-    --exclude='composer.json' \
-    --exclude='composer.lock' \
-    "${PLUGIN_DIR}/" "${BUILD_DIR}/"
+for item in "${SHIPPED[@]}"; do
+    if [ ! -e "${PLUGIN_DIR}/${item}" ]; then
+        echo "ERROR: ${item} is listed in SHIPPED but does not exist" >&2
+        exit 1
+    fi
+    cp -R "${PLUGIN_DIR}/${item}" "${BUILD_DIR}/"
+done
+
+# Operating system clutter may sit in a local working copy.
+find "${BUILD_DIR}" \( -name '.DS_Store' -o -name 'Thumbs.db' \) -delete
 
 rm -f "${OUTPUT}"
 ( cd "${BUILD_ROOT}" && zip -rq "${OUTPUT}" "${PLUGIN_SLUG}" )
 
-rm -rf "${BUILD_ROOT}"
-
 echo "Built: ${OUTPUT}"
-ls -lh "${OUTPUT}"
+unzip -l "${OUTPUT}"

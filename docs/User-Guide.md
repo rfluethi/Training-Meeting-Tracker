@@ -10,7 +10,7 @@ When you create a meeting issue in the team GitHub repository, set or change the
 
 | Block on the website | Which issues land here? |
 |---|---|
-| **Upcoming meetings** | Issues without the `Erledigt` label, date in the future. |
+| **Upcoming meetings** | Issues without the `Erledigt` label, date in the future. Without such an issue the block says "No date set yet." |
 | **Meetings in progress** | Issues without the `Erledigt` label, date already passed (typically waiting for the minutes). |
 | **Minutes** | Issues with the `Erledigt` label, grouped by year. |
 
@@ -20,7 +20,7 @@ The name shown for each entry (for example "Sitzung" or "Workshop") comes from t
 
 ### Step 1: Create the meeting issue
 
-1. In the repository [`learn-wp-dach-team`](https://github.com/rfluethi/learn-wp-dach-team/issues/new/choose) click **New issue**.
+1. In the repository [`learn-wp-dach-team`](https://github.com/learn-wp-dach/learn-wp-dach-team/issues/new/choose) click **New issue**.
 2. Choose the template **Sitzung**.
 3. Fill in the fields:
    - **Title:** must contain a date in `YYYY-MM-DD` format. Recommended: `Sitzung 2026-05-26`. Other words (for example `Workshop 2026-07-10`) work too, as long as the date is included.
@@ -56,7 +56,7 @@ As soon as the meeting date is past, the issue moves from Upcoming meetings into
 As soon as the `Erledigt` label is set:
 
 - The issue moves into the Minutes list.
-- The date next to it ("Protokoll vom ...") is set to the day the issue was closed (if it was closed).
+- The date next to it is the meeting date, the same date as in the issue title.
 
 ## 5. What if the meeting is moved?
 
@@ -75,7 +75,7 @@ The website shows the new date within a few minutes.
 2. Write a short comment ("Sitzung ausgefallen, kein Protokoll").
 3. Set the label `Erledigt` and close the issue.
 
-The meeting then lands as Minutes in the list, but without content, and the next upcoming meeting moves up.
+The meeting then lands as Minutes in the list, but without content, and the next upcoming meeting moves up. If there is none, Upcoming meetings says "No date set yet."
 
 ## 6. When does my change appear on the website?
 
@@ -87,7 +87,7 @@ Between saving the issue and the change being visible on the website, typically 
 **When it has to be faster** (for example shortly before a meeting), someone with WordPress admin rights can bypass the cache:
 
 - Settings, Training Meeting Tracker, **Refresh now** (loads immediately).
-- Alternative: **Clear cache**, then the next anonymous page view triggers the refresh.
+- Alternative: **Clear cache now**, then the next anonymous page view triggers the refresh.
 
 ## 7. What if something is not right?
 
@@ -116,7 +116,7 @@ If something basic is broken (the website shows nothing at all, error messages, 
 The template provides the structure. Three additional recommendations:
 
 - **Meeting date in the title in exactly `YYYY-MM-DD` format.** This enables automatic sorting. Examples: `Sitzung 2026-05-26`, NOT `Sitzung 26.5.26`.
-- **Set the `Veranstaltung:` field.** Even if it always reads "Sitzung", otherwise the plugin falls back to the issue title and shows the date twice.
+- **Set the `Veranstaltung:` field.** Even if it always reads "Sitzung". Without it the name is taken from the issue title without the date. If nothing is left, the website shows the generic name "Sitzung".
 - **Fill in everything in the body that the template provides.** This also helps later readers, and the meeting overview.
 
 ## 9. Cheat sheet
@@ -130,6 +130,7 @@ The template provides the structure. Three additional recommendations:
 | Change body field `Veranstaltung:` | The displayed name changes |
 | Edit the issue (date, time, and so on) | Display is updated automatically |
 | Remove the `sitzung` label | Meeting disappears from the website entirely |
+| No issue with a future date left | Upcoming meetings says "No date set yet." |
 
 ## 10. Further reading
 

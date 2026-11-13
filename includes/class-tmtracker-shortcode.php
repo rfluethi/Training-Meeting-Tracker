@@ -58,13 +58,32 @@ class TMTracker_Shortcode {
 	 * @return string HTML.
 	 */
 	public function render( $atts ) {
+		$result = $this->fetcher->get_data();
+
+		wp_enqueue_style( 'tmtracker-frontend' );
+
+		return $this->renderer->render(
+			$result['data'],
+			$this->normalize_atts( $atts ),
+			$result['stale'],
+			$result['error']
+		);
+	}
+
+	/**
+	 * Applies the defaults and brings every attribute into its final type.
+	 *
+	 * @param array|string $atts Raw shortcode attributes.
+	 * @return array{show_upcoming: bool, show_in_progress: bool, show_past: bool, years: string|int, heading_level: int}
+	 */
+	public function normalize_atts( $atts ) {
 		$atts = shortcode_atts(
 			array(
-				// New attributes (schema v2).
 				'show_upcoming'    => 'true',
 				'show_in_progress' => 'true',
 				'show_past'        => 'true',
 				'years'            => 'all',
+				'heading_level'    => TMTracker_Renderer::MIN_HEADING_LEVEL,
 				// Backwards-compat alias: maps to show_upcoming.
 				'show_next'        => null,
 			),
@@ -78,22 +97,12 @@ class TMTracker_Shortcode {
 			$show_upcoming = $atts['show_next'];
 		}
 
-		$normalized = array(
+		return array(
 			'show_upcoming'    => $this->to_bool( $show_upcoming ),
 			'show_in_progress' => $this->to_bool( $atts['show_in_progress'] ),
 			'show_past'        => $this->to_bool( $atts['show_past'] ),
 			'years'            => $this->normalize_years( $atts['years'] ),
-		);
-
-		$result = $this->fetcher->get_data();
-
-		wp_enqueue_style( 'tmtracker-frontend' );
-
-		return $this->renderer->render(
-			$result['data'],
-			$normalized,
-			$result['stale'],
-			$result['error']
+			'heading_level'    => TMTracker_Renderer::clamp_heading_level( $atts['heading_level'] ),
 		);
 	}
 
@@ -107,7 +116,7 @@ class TMTracker_Shortcode {
 		if ( is_bool( $value ) ) {
 			return $value;
 		}
-		$value = strtolower( (string) $value );
+		$value = strtolower( trim( (string) $value ) );
 		return in_array( $value, array( '1', 'true', 'yes', 'ja' ), true );
 	}
 

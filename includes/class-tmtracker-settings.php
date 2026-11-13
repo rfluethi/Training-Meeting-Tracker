@@ -23,14 +23,35 @@ class TMTracker_Settings {
 	const GROUP = 'tmtracker_settings_group';
 
 	/**
-	 * Nonce action for "Clear cache".
+	 * Action name and nonce action of the "Refresh now" and "Clear cache now" buttons.
 	 */
-	const NONCE_CLEAR_CACHE = 'tmtracker_clear_cache';
+	const CACHE_ACTION = 'tmtracker_cache_action';
 
 	/**
-	 * Nonce action for "Refresh now".
+	 * Fetcher.
+	 *
+	 * @var TMTracker_Fetcher
 	 */
-	const NONCE_REFRESH = 'tmtracker_refresh_now';
+	private $fetcher;
+
+	/**
+	 * Whether an invalid URL has already been reported in this request.
+	 *
+	 * WordPress runs the sanitize callback twice when the option is saved
+	 * for the first time. The flag keeps the notice from appearing twice.
+	 *
+	 * @var bool
+	 */
+	private $url_error_reported = false;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param TMTracker_Fetcher $fetcher Fetcher instance.
+	 */
+	public function __construct( TMTracker_Fetcher $fetcher ) {
+		$this->fetcher = $fetcher;
+	}
 
 	/**
 	 * Register hooks.
@@ -40,8 +61,11 @@ class TMTracker_Settings {
 	public function register() {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
-		add_action( 'admin_post_tmtracker_clear_cache', array( $this, 'handle_clear_cache' ) );
-		add_action( 'admin_post_tmtracker_refresh_now', array( $this, 'handle_refresh_now' ) );
+		add_action( 'admin_post_' . self::CACHE_ACTION, array( $this, 'handle_cache_action' ) );
+		add_action( 'add_option_' . TMTRACKER_OPTION_SETTINGS, array( $this, 'handle_settings_change' ) );
+		add_action( 'update_option_' . TMTRACKER_OPTION_SETTINGS, array( $this, 'handle_settings_change' ) );
+		add_filter( 'plugin_action_links_' . TMTRACKER_PLUGIN_BASENAME, array( $this, 'add_settings_link' ) );
+		add_filter( 'removable_query_args', array( $this, 'add_removable_query_args' ) );
 	}
 
 	/**
@@ -106,7 +130,47 @@ class TMTracker_Settings {
 	}
 
 	/**
+	 * Adds a "Settings" link to the plugin row on the Plugins screen.
+	 *
+	 * @param mixed $links Existing action links.
+	 * @return array
+	 */
+	public function add_settings_link( $links ) {
+		$links = (array) $links;
+
+		array_unshift(
+			$links,
+			sprintf(
+				'<a href="%1$s">%2$s</a>',
+				esc_url( $this->get_page_url() ),
+				esc_html__( 'Settings', 'training-meeting-tracker' )
+			)
+		);
+
+		return $links;
+	}
+
+	/**
+	 * Lets WordPress strip the notice flags from the address bar, so a
+	 * reload does not show the same notice again.
+	 *
+	 * @param mixed $args Query arguments WordPress removes from the URL.
+	 * @return array
+	 */
+	public function add_removable_query_args( $args ) {
+		$args   = (array) $args;
+		$args[] = 'tmtracker-cache-clear';
+		$args[] = 'tmtracker-refresh';
+
+		return $args;
+	}
+
+	/**
 	 * Sanitize callback for the whole options array.
+	 *
+	 * An empty URL falls back to the default source. An invalid URL keeps
+	 * the URL saved before and reports the problem. A key that is missing
+	 * in the input keeps its saved value.
 	 *
 	 * @param mixed $input Raw input.
 	 * @return array
@@ -121,28 +185,38 @@ class TMTracker_Settings {
 			return $out;
 		}
 
-		if ( isset( $input['json_url'] ) ) {
-			$url = esc_url_raw( trim( (string) $input['json_url'] ) );
-			if ( '' !== $url ) {
+		$saved_url          = $this->fetcher->get_url();
+		$out['cache_hours'] = $this->fetcher->get_cache_hours();
+
+		if ( ! isset( $input['json_url'] ) || ! is_scalar( $input['json_url'] ) ) {
+			$out['json_url'] = $saved_url;
+		} else {
+			$raw = trim( (string) $input['json_url'] );
+			$url = esc_url_raw( $raw, array( 'http', 'https' ) );
+
+			if ( '' !== $raw && '' !== $url && wp_http_validate_url( $url ) ) {
 				$out['json_url'] = $url;
+			} elseif ( '' !== $raw ) {
+				$out['json_url'] = $saved_url;
+				$this->report_invalid_url();
 			}
 		}
 
-		if ( isset( $input['cache_hours'] ) ) {
-			$hours = (int) $input['cache_hours'];
-			if ( $hours < 1 ) {
-				$hours = 1;
-			}
-			if ( $hours > 168 ) {
-				$hours = 168;
-			}
-			$out['cache_hours'] = $hours;
+		if ( isset( $input['cache_hours'] ) && is_scalar( $input['cache_hours'] ) ) {
+			$out['cache_hours'] = TMTracker_Fetcher::clamp_cache_hours( (int) $input['cache_hours'] );
 		}
-
-		// Drop the cache after settings changes so the new URL takes effect immediately.
-		delete_transient( TMTRACKER_TRANSIENT_DATA );
 
 		return $out;
+	}
+
+	/**
+	 * Drops the cache when the saved settings changed, so a new URL or cache
+	 * duration takes effect on the next page view.
+	 *
+	 * @return void
+	 */
+	public function handle_settings_change() {
+		$this->fetcher->clear_cache();
 	}
 
 	/**
@@ -152,7 +226,7 @@ class TMTracker_Settings {
 	 */
 	public function render_section_intro() {
 		echo '<p>' . esc_html__(
-			'The session list is fed by a JSON file. Usually that is the file generated automatically on the data branch of the team repository.',
+			'The meeting list is fed by a JSON file. Usually that is the file generated automatically on the data branch of the team repository.',
 			'training-meeting-tracker'
 		) . '</p>';
 	}
@@ -163,17 +237,15 @@ class TMTracker_Settings {
 	 * @return void
 	 */
 	public function render_field_json_url() {
-		$settings = (array) get_option( TMTRACKER_OPTION_SETTINGS, array() );
-		$value    = isset( $settings['json_url'] ) ? (string) $settings['json_url'] : TMTRACKER_DEFAULT_JSON_URL;
-
 		printf(
-			'<input type="url" name="%1$s[json_url]" id="tmtracker_json_url" value="%2$s" class="regular-text" />',
+			'<input type="url" name="%1$s[json_url]" id="tmtracker_json_url" value="%2$s" placeholder="%3$s" class="large-text code" aria-describedby="tmtracker_json_url_description" />',
 			esc_attr( TMTRACKER_OPTION_SETTINGS ),
-			esc_attr( $value )
+			esc_attr( $this->fetcher->get_url() ),
+			esc_attr( TMTRACKER_DEFAULT_JSON_URL )
 		);
 
-		echo '<p class="description">' . esc_html__(
-			'Full URL to sitzungen.json.',
+		echo '<p class="description" id="tmtracker_json_url_description">' . esc_html__(
+			'Full URL to sitzungen.json, starting with http or https. Leave the field empty to use the default source.',
 			'training-meeting-tracker'
 		) . '</p>';
 	}
@@ -184,19 +256,22 @@ class TMTracker_Settings {
 	 * @return void
 	 */
 	public function render_field_cache_hours() {
-		$settings = (array) get_option( TMTRACKER_OPTION_SETTINGS, array() );
-		$value    = isset( $settings['cache_hours'] ) ? (int) $settings['cache_hours'] : TMTRACKER_DEFAULT_CACHE_HOURS;
-
 		printf(
-			'<input type="number" name="%1$s[cache_hours]" id="tmtracker_cache_hours" value="%2$d" min="1" max="168" step="1" class="small-text" />',
+			'<input type="number" name="%1$s[cache_hours]" id="tmtracker_cache_hours" value="%2$d" min="%3$d" max="%4$d" step="1" class="small-text" aria-describedby="tmtracker_cache_hours_description" />',
 			esc_attr( TMTRACKER_OPTION_SETTINGS ),
-			(int) $value
+			(int) $this->fetcher->get_cache_hours(),
+			(int) TMTracker_Fetcher::MIN_CACHE_HOURS,
+			(int) TMTracker_Fetcher::MAX_CACHE_HOURS
 		);
 
-		echo '<p class="description">' . esc_html__(
-			'How long a successful fetch is cached before it is fetched again. Values: 1 to 168.',
-			'training-meeting-tracker'
-		) . '</p>';
+		echo '<p class="description" id="tmtracker_cache_hours_description">';
+		printf(
+			/* translators: 1: lowest allowed number of hours, 2: highest allowed number of hours. */
+			esc_html__( 'How long a successful fetch is cached before it is fetched again. Values: %1$d to %2$d.', 'training-meeting-tracker' ),
+			(int) TMTracker_Fetcher::MIN_CACHE_HOURS,
+			(int) TMTracker_Fetcher::MAX_CACHE_HOURS
+		);
+		echo '</p>';
 	}
 
 	/**
@@ -209,43 +284,11 @@ class TMTracker_Settings {
 			return;
 		}
 
-		$last_good    = get_option( TMTRACKER_OPTION_LAST_GOOD, null );
-		$generated_at = ( is_array( $last_good ) && ! empty( $last_good['generated_at'] ) )
-			? (string) $last_good['generated_at']
-			: '';
-
-		// Notice flag after cache reset: read-only comparison, hence non-critical.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$cache_cleared = isset( $_GET['tmtracker-cache-clear'] )
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			&& '1' === sanitize_text_field( wp_unslash( $_GET['tmtracker-cache-clear'] ) );
-
-		// Notice flag after manual refresh.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$refresh_status = isset( $_GET['tmtracker-refresh'] )
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			? sanitize_text_field( wp_unslash( $_GET['tmtracker-refresh'] ) )
-			: '';
-
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html__( 'Training Meeting Tracker', 'training-meeting-tracker' ); ?></h1>
 
-			<?php if ( $cache_cleared ) : ?>
-				<div class="notice notice-success is-dismissible">
-					<p><?php echo esc_html__( 'Cache cleared. The next page view will reload the session data.', 'training-meeting-tracker' ); ?></p>
-				</div>
-			<?php endif; ?>
-
-			<?php if ( 'ok' === $refresh_status ) : ?>
-				<div class="notice notice-success is-dismissible">
-					<p><?php echo esc_html__( 'Session data was refreshed successfully.', 'training-meeting-tracker' ); ?></p>
-				</div>
-			<?php elseif ( 'fail' === $refresh_status ) : ?>
-				<div class="notice notice-error is-dismissible">
-					<p><?php echo esc_html__( 'Refresh failed. The source could not be loaded; the last successful state is kept.', 'training-meeting-tracker' ); ?></p>
-				</div>
-			<?php endif; ?>
+			<?php $this->render_notices(); ?>
 
 			<form method="post" action="options.php">
 				<?php
@@ -255,51 +298,21 @@ class TMTracker_Settings {
 				?>
 			</form>
 
-			<hr />
+			<h2><?php echo esc_html__( 'Status', 'training-meeting-tracker' ); ?></h2>
 
-			<h2><?php echo esc_html__( 'Cache', 'training-meeting-tracker' ); ?></h2>
+			<?php $this->render_status(); ?>
 
-			<?php if ( '' !== $generated_at ) : ?>
-				<p>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="<?php echo esc_attr( self::CACHE_ACTION ); ?>" />
+				<?php wp_nonce_field( self::CACHE_ACTION ); ?>
+				<p class="submit">
 					<?php
-					printf(
-						/* translators: %s: time of the last successful JSON generation. */
-						esc_html__( 'Last successfully read data state: %s', 'training-meeting-tracker' ),
-						'<code>' . esc_html( $generated_at ) . '</code>'
-					);
+					submit_button( __( 'Refresh now', 'training-meeting-tracker' ), 'secondary', 'tmtracker_refresh', false );
+					echo ' ';
+					submit_button( __( 'Clear cache now', 'training-meeting-tracker' ), 'secondary', 'tmtracker_clear', false );
 					?>
 				</p>
-			<?php else : ?>
-				<p><?php echo esc_html__( 'No data loaded yet.', 'training-meeting-tracker' ); ?></p>
-			<?php endif; ?>
-
-			<p>
-				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;margin-right:0.5em;">
-					<input type="hidden" name="action" value="tmtracker_refresh_now" />
-					<?php wp_nonce_field( self::NONCE_REFRESH ); ?>
-					<?php
-					submit_button(
-						__( 'Refresh now', 'training-meeting-tracker' ),
-						'primary',
-						'submit',
-						false
-					);
-					?>
-				</form>
-
-				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;">
-					<input type="hidden" name="action" value="tmtracker_clear_cache" />
-					<?php wp_nonce_field( self::NONCE_CLEAR_CACHE ); ?>
-					<?php
-					submit_button(
-						__( 'Clear cache now', 'training-meeting-tracker' ),
-						'secondary',
-						'submit',
-						false
-					);
-					?>
-				</form>
-			</p>
+			</form>
 
 			<p class="description">
 				<?php
@@ -310,8 +323,6 @@ class TMTracker_Settings {
 				?>
 			</p>
 
-			<hr />
-
 			<h2><?php echo esc_html__( 'Usage', 'training-meeting-tracker' ); ?></h2>
 			<p>
 				<?php echo esc_html__( 'Place the shortcode on a page or post:', 'training-meeting-tracker' ); ?>
@@ -319,18 +330,18 @@ class TMTracker_Settings {
 			</p>
 			<p>
 				<?php echo esc_html__( 'With optional attributes:', 'training-meeting-tracker' ); ?>
-				<code>[training_meeting_tracker show_next="true" show_past="true" years="3"]</code>
+				<code>[training_meeting_tracker show_upcoming="true" show_in_progress="true" show_past="true" years="3" heading_level="2"]</code>
 			</p>
 		</div>
 		<?php
 	}
 
 	/**
-	 * Receive "Clear cache".
+	 * Receive the "Refresh now" and "Clear cache now" buttons.
 	 *
 	 * @return void
 	 */
-	public function handle_clear_cache() {
+	public function handle_cache_action() {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die(
 				esc_html__( 'Permission denied.', 'training-meeting-tracker' ),
@@ -339,52 +350,167 @@ class TMTracker_Settings {
 			);
 		}
 
-		check_admin_referer( self::NONCE_CLEAR_CACHE );
+		check_admin_referer( self::CACHE_ACTION );
 
-		delete_transient( TMTRACKER_TRANSIENT_DATA );
+		if ( isset( $_POST['tmtracker_refresh'] ) ) {
+			$result = $this->fetcher->get_data( true );
+			$flag   = 'tmtracker-refresh';
+			$value  = ( null !== $result['data'] && empty( $result['stale'] ) ) ? 'ok' : 'fail';
+		} else {
+			$this->fetcher->clear_cache();
+			$flag  = 'tmtracker-cache-clear';
+			$value = '1';
+		}
 
-		$redirect = add_query_arg(
-			array(
-				'page'                  => self::PAGE_SLUG,
-				'tmtracker-cache-clear' => '1',
-			),
-			admin_url( 'options-general.php' )
-		);
-
-		wp_safe_redirect( $redirect );
+		wp_safe_redirect( add_query_arg( $flag, $value, $this->get_page_url() ) );
 		exit;
 	}
 
 	/**
-	 * Receive "Refresh now". Force a fetch.
+	 * Notices after a cache action.
 	 *
 	 * @return void
 	 */
-	public function handle_refresh_now() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die(
-				esc_html__( 'Permission denied.', 'training-meeting-tracker' ),
-				'',
-				array( 'response' => 403 )
+	private function render_notices() {
+		// The flags only select a notice text, they change nothing: no nonce needed.
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$cache_cleared  = isset( $_GET['tmtracker-cache-clear'] );
+		$refresh_status = isset( $_GET['tmtracker-refresh'] )
+			? sanitize_key( wp_unslash( $_GET['tmtracker-refresh'] ) )
+			: '';
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		if ( $cache_cleared ) {
+			$this->render_notice(
+				'success',
+				__( 'Cache cleared. The next page view will reload the meeting data.', 'training-meeting-tracker' )
 			);
 		}
 
-		check_admin_referer( self::NONCE_REFRESH );
+		if ( 'ok' === $refresh_status ) {
+			$this->render_notice(
+				'success',
+				__( 'Meeting data was refreshed successfully.', 'training-meeting-tracker' )
+			);
+		} elseif ( 'fail' === $refresh_status ) {
+			$status  = $this->fetcher->get_status();
+			$message = __( 'Refresh failed. The source could not be loaded; the last successful state is kept.', 'training-meeting-tracker' );
 
-		$fetcher = new TMTracker_Fetcher();
-		$result  = $fetcher->get_data( true );
+			if ( '' !== $status['last_error'] ) {
+				$message .= ' ' . sprintf(
+					/* translators: %s: error message of the failed fetch. */
+					__( 'Reason: %s', 'training-meeting-tracker' ),
+					$status['last_error']
+				);
+			}
 
-		$status = ( null !== $result['data'] && empty( $result['stale'] ) ) ? 'ok' : 'fail';
+			$this->render_notice( 'error', $message );
+		}
+	}
 
-		$redirect = add_query_arg(
-			array(
-				'page'              => self::PAGE_SLUG,
-				'tmtracker-refresh' => $status,
-			),
-			admin_url( 'options-general.php' )
+	/**
+	 * Prints a single admin notice.
+	 *
+	 * @param string $type    Notice type: success or error.
+	 * @param string $message Unescaped message.
+	 * @return void
+	 */
+	private function render_notice( $type, $message ) {
+		printf(
+			'<div class="notice notice-%1$s is-dismissible"><p>%2$s</p></div>',
+			esc_attr( $type ),
+			esc_html( $message )
 		);
+	}
 
-		wp_safe_redirect( $redirect );
-		exit;
+	/**
+	 * Status table: when the data was fetched and generated, and the last error.
+	 *
+	 * @return void
+	 */
+	private function render_status() {
+		$status       = $this->fetcher->get_status();
+		$last_good    = get_option( TMTRACKER_OPTION_LAST_GOOD, null );
+		$generated_at = ( is_array( $last_good ) && ! empty( $last_good['generated_at'] ) )
+			? strtotime( (string) $last_good['generated_at'] )
+			: false;
+
+		if ( ! is_array( $last_good ) ) {
+			$fetched = __( 'No data loaded yet.', 'training-meeting-tracker' );
+		} elseif ( $status['last_success'] > 0 ) {
+			$fetched = $this->format_timestamp( $status['last_success'] );
+		} else {
+			$fetched = __( 'Not recorded yet. The time appears after the next fetch.', 'training-meeting-tracker' );
+		}
+
+		?>
+		<table class="form-table" role="presentation">
+			<tr>
+				<th scope="row"><?php echo esc_html__( 'Last successful fetch', 'training-meeting-tracker' ); ?></th>
+				<td><?php echo esc_html( $fetched ); ?></td>
+			</tr>
+			<?php if ( false !== $generated_at ) : ?>
+				<tr>
+					<th scope="row"><?php echo esc_html__( 'Data generated by the source', 'training-meeting-tracker' ); ?></th>
+					<td>
+						<?php echo esc_html( $this->format_timestamp( $generated_at ) ); ?>
+						<p class="description">
+							<?php echo esc_html__( 'The source only writes a new file when a meeting changed. An old date here is normal.', 'training-meeting-tracker' ); ?>
+						</p>
+					</td>
+				</tr>
+			<?php endif; ?>
+			<?php if ( '' !== $status['last_error'] ) : ?>
+				<tr>
+					<th scope="row"><?php echo esc_html__( 'Last fetch failed', 'training-meeting-tracker' ); ?></th>
+					<td><?php echo esc_html( $this->format_timestamp( $status['last_attempt'] ) . ': ' . $status['last_error'] ); ?></td>
+				</tr>
+			<?php endif; ?>
+		</table>
+		<?php
+	}
+
+	/**
+	 * Formats a Unix timestamp with the date and time format of the site.
+	 *
+	 * @param int $timestamp Unix timestamp.
+	 * @return string
+	 */
+	private function format_timestamp( $timestamp ) {
+		return (string) wp_date(
+			get_option( 'date_format' ) . ' ' . get_option( 'time_format' ),
+			(int) $timestamp
+		);
+	}
+
+	/**
+	 * URL of the settings page.
+	 *
+	 * @return string
+	 */
+	private function get_page_url() {
+		return add_query_arg( 'page', self::PAGE_SLUG, admin_url( 'options-general.php' ) );
+	}
+
+	/**
+	 * Reports an invalid JSON URL on the settings page.
+	 *
+	 * @return void
+	 */
+	private function report_invalid_url() {
+		// The function only exists in the admin. The callback also runs for
+		// update_option() calls outside of it, for example from WP-CLI.
+		if ( $this->url_error_reported || ! function_exists( 'add_settings_error' ) ) {
+			return;
+		}
+
+		$this->url_error_reported = true;
+
+		add_settings_error(
+			TMTRACKER_OPTION_SETTINGS,
+			'tmtracker_invalid_url',
+			__( 'The JSON URL is not a valid http or https address. The previous URL was kept.', 'training-meeting-tracker' ),
+			'error'
+		);
 	}
 }

@@ -21,6 +21,7 @@
     },
     "scripts": {
         "lint": "phpcs --standard=phpcs.xml",
-        "lint-fix": "phpcbf --standard=phpcs.xml"
+        "lint-fix": "phpcbf --standard=phpcs.xml",
+        "test": "php tests/run-tests.php"
     }
 }

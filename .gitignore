@@ -16,7 +16,7 @@ Thumbs.db
 *.swp
 *.swo
 
-# Build-Artefakte
+# Build artefacts
 /build/
 /dist/
 *.zip
